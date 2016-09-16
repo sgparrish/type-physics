@@ -1,0 +1,17 @@
+{
+   "compilerOptions": {
+      "target": "es5",
+      "sourceMap":  true,
+      "outFile": "bin/main.js",
+      "module": "amd",
+      "moduleResolution": "node",
+      "watch": true
+   },
+   "filesGlob": [
+      "src/**/*.ts",
+      "test/**/*.ts"
+   ],
+   "exclude": [
+      "node_modules"
+   ]
+}
