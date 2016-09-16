@@ -1,8 +1,6 @@
 import Vec2 from "./vec2";
 import Rectangle from "./rectangle";
 
-const PRECISION: number = 2;
-
 export default class Collidable {
 
    private _position: Vec2;
@@ -36,15 +34,15 @@ export default class Collidable {
    }
 
    public set position(vec: Vec2) {
-      this._position = vec.round(PRECISION);
+      this._position = vec.round();
    }
    public set velocity(vec: Vec2) {
       if (this.moveable) {
-         this._velocity = vec.round(PRECISION);
+         this._velocity = vec.round();
       }
    }
    public set dimension(vec: Vec2) {
-      this._dimension = vec.round(PRECISION);
+      this._dimension = vec.round();
    }
 
    public getRectangle(): Rectangle {

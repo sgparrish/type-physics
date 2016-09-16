@@ -45,6 +45,7 @@ export default class World {
       let timeRemaining: number = 1.0;
       let pair: CollisionPair;
       while (!this.collisionPairs.isEmpty()) {
+         console.log('asdf');
          pair = this.collisionPairs.dequeue();
          if (pair.collisionTime > 0 && pair.collisionTime <= timeRemaining) {
             this.simulateMovement(delta, pair.collisionTime - lastCollision);

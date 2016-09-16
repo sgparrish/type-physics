@@ -1,4 +1,5 @@
 import Vec2 from "./vec2";
+import Utils from "../utils";
 
 export default class Rectangle {
    private _position: Vec2;
@@ -15,7 +16,7 @@ export default class Rectangle {
    public get dimension(): Vec2 {
       return this._dimension;
    }
-   
+
    public get x(): number {
       return this._position.x;
    }
@@ -47,10 +48,10 @@ export default class Rectangle {
    }
 
    public overlaps(other: Rectangle): boolean {
-      return this.left < other.right && 
-      this.right > other.left && 
-      this.top < other.bottom && 
-      this.bottom > other.top;
+      return Utils.lt(this.left, other.right) &&  // this.left < other.right
+         Utils.gt(this.right, other.left) &&  // this.right > other.left
+         Utils.lt(this.top, other.bottom) &&  // this.top < other.bottom
+         Utils.gt(this.bottom, other.top); // this.bottom > other.top
    }
 
    public merge(other: Rectangle): Rectangle {

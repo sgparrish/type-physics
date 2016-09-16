@@ -1,3 +1,5 @@
+import Utils from "../utils";
+
 export default class Vec2 {
 
    private _x: number;
@@ -47,11 +49,10 @@ export default class Vec2 {
       return this._x * other._y - this._y * other._x;
    }
 
-   public round(places: number): Vec2 {
-      let factor = Math.pow(10, places);
+   public round(places?: number): Vec2 {
       return new Vec2(
-         Math.round(this._x * factor) / factor,
-         Math.round(this._y * factor) / factor
+         Utils.round(this._x, places),
+         Utils.round(this._y, places)
       );
    }
 }
