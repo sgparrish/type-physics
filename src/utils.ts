@@ -3,10 +3,7 @@ const DEFAULT_PRECISION = 2;
 const DEFAULT_EPSILON = 0.001;
 
 export default class Utils {
-   public static round(operand: number, places?: number): number {
-      if (typeof places === undefined) {
-         places = DEFAULT_PRECISION;
-      }
+   public static round(operand: number, places: number = DEFAULT_PRECISION): number {
       let factor = Math.pow(10, places);
       return Math.round(operand * factor) / factor;
    }
@@ -30,11 +27,7 @@ export default class Utils {
       return a < b || this.nearlyEqual(a, b, epsilon);
    }
 
-   public static nearlyEqual(a: number, b: number, epsilon?: number): boolean {
-      if (typeof epsilon === undefined) {
-         epsilon = DEFAULT_EPSILON;
-      }
-
+   public static nearlyEqual(a: number, b: number, epsilon: number = DEFAULT_EPSILON): boolean {
       let absA = Math.abs(a);
       let absB = Math.abs(b);
       let diff = Math.abs(a - b);

@@ -1,5 +1,6 @@
 import Vec2 from "./vec2";
 import Rectangle from "./rectangle";
+import CollisionListener from "./collisionlistener";
 
 export default class Collidable {
 
@@ -9,13 +10,15 @@ export default class Collidable {
 
    public moveable: boolean;
 
-   public cleanAABB: boolean;
+   public regenPairs: boolean;
    public aabb: Rectangle;
+
+   public listener: CollisionListener;
 
    public constructor(pos: Vec2, vel: Vec2, dim: Vec2) {
       this.moveable = true;
 
-      this.cleanAABB = false;
+      this.regenPairs = false;
       this.aabb = null;
 
       this.position = pos;
@@ -50,14 +53,30 @@ export default class Collidable {
          this.dimension.x, this.dimension.y);
    }
 
-   public getMovingAABB(delta: number, timeRemaining: number): Rectangle {
+   public getMovingRectangle(delta: number, timeRemaining: number): Rectangle {
       let current: Rectangle = this.getRectangle();
       let scaledVel: Vec2 = this.velocity.times(delta * timeRemaining);
       let future: Rectangle = current.add(scaledVel.x, scaledVel.y, 0, 0);
       return current.merge(future);
    }
 
+   public regenerateAABB(delta: number, timeRemaining: number, updateRegenPairs: boolean): void {
+      let newAABB = this.getMovingRectangle(delta, timeRemaining);
+      if (!this.aabb.contains(newAABB) && updateRegenPairs) {
+         this.regenPairs = true;
+      } else {
+         this.regenPairs = false;
+      }
+      this.aabb = newAABB;
+   }
+
    public simulate(delta: number, timeToSimulate: number): void {
       this.position = this.position.add(this.velocity.times(delta * timeToSimulate));
+   }
+
+   public collide(time: number, normal: Vec2, other: Collidable): void {
+      if (this.listener) {
+         this.listener.collision(time, normal, other);
+      }
    }
 }

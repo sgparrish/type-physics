@@ -25,9 +25,9 @@ var pair32 = new CollisionPair(col3, col2);
 export default class CollisionPairTest extends tsUnit.TestClass {
 
    testAabbOverlap() {
-      col1.aabb = col1.getMovingAABB(1, 1);
-      col2.aabb = col2.getMovingAABB(1, 1);
-      col3.aabb = col3.getMovingAABB(1, 1);
+      col1.regenerateAABB(1, 1, false);
+      col2.regenerateAABB(1, 1, false);
+      col3.regenerateAABB(1, 1, false);
 
       this.isTrue(pair12.aabbsOverlap());
       this.isFalse(pair32.aabbsOverlap());

@@ -54,6 +54,13 @@ export default class Rectangle {
          Utils.gt(this.bottom, other.top); // this.bottom > other.top
    }
 
+   public contains(other: Rectangle): boolean {
+      return Utils.lt(this.left, other.left) && // this.left < other.left
+      Utils.gt(this.right, other.right) && // this.right > other.right
+      Utils.lt(this.top, other.top) && // this.top > other.top
+      Utils.gt(this.bottom, other.bottom); // this.bottom > other.bottom
+   }
+
    public merge(other: Rectangle): Rectangle {
       let minX = Math.min(this.left, other.left);
       let maxX = Math.max(this.right, other.right);

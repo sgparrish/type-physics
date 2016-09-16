@@ -34,12 +34,8 @@ export default class Renderer {
       );
    }
 
-   public drawRectangle(rect: Rectangle, color?: string): void {
-      if (typeof color !== 'undefined') {
-         this._context.strokeStyle = color;
-      } else {
-         this._context.strokeStyle = "#000000";
-      }
+   public drawRectangle(rect: Rectangle, color: string = "#000000"): void {
+      this._context.strokeStyle = color;
       this._context.strokeRect(
          rect.x,
          rect.y,
@@ -58,12 +54,8 @@ export default class Renderer {
       }
    }
 
-   public drawText(text: string, color?: string): void {
-      if (typeof color !== 'undefined') {
-         this._context.fillStyle = color;
-      } else {
-         this._context.fillStyle = "#000000";
-      }
+   public drawText(text: string, color: string = "#000000"): void {
+      this._context.strokeStyle = color;
       this._context.font = "12px Monospace";
       this._context.fillText(text, 0, 12);
    }
