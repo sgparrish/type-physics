@@ -2,7 +2,7 @@ import Vec2 from "./physics/vec2";
 import Collidable from "./physics/collidable";
 import World from "./physics/world";
 import Renderer from "./graphics/renderer";
-import GameScreen from "./gamescreen";
+import {GameScreen} from "./gamescreen";
 
 export default class PhysicsScreen extends GameScreen {
 

@@ -1,5 +1,4 @@
-export default GameScreen;
-abstract class GameScreen {
+export abstract class GameScreen {
 
    private _fps: number;
    private _framesThisSecond: number;

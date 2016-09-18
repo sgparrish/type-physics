@@ -62,7 +62,7 @@ export default class Collidable {
 
    public regenerateAABB(delta: number, timeRemaining: number, updateRegenPairs: boolean): void {
       let newAABB = this.getMovingRectangle(delta, timeRemaining);
-      if (!this.aabb.contains(newAABB) && updateRegenPairs) {
+      if (this.aabb !== null && !this.aabb.contains(newAABB) && updateRegenPairs) {
          this.regenPairs = true;
       } else {
          this.regenPairs = false;

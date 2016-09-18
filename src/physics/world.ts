@@ -31,10 +31,17 @@ export default class World {
    }
 
    private getNextPair(): CollisionPair {
-      let pair = this.collisionPairs.dequeue();
-      this.collisionPairMap.remove(pair.collidableA, pair);
-      this.collisionPairMap.remove(pair.collidableB, pair);
-      return pair;
+      if (!this.collisionPairs.isEmpty()) {
+         let pair = this.collisionPairs.dequeue();
+         if (this.collisionPairMap.containsKey(pair.collidableA)) {
+            this.collisionPairMap.remove(pair.collidableA, pair);
+         }
+         if (this.collisionPairMap.containsKey(pair.collidableB)) {
+            this.collisionPairMap.remove(pair.collidableB, pair);
+         }
+         return pair;
+      }
+      return null;
    }
 
    private removePair(pair: CollisionPair): void {
