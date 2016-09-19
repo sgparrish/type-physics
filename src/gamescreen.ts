@@ -1,4 +1,4 @@
-export abstract class GameScreen {
+abstract class GameScreen {
 
    private _fps: number;
    private _framesThisSecond: number;
@@ -79,3 +79,4 @@ export abstract class GameScreen {
    protected abstract render(interpPercent: number): void;
    protected abstract end(): void;
 }
+export default GameScreen;

@@ -15,6 +15,7 @@ export default class Player extends PhysicsEntity {
    }
 
    public collision(time: number, normal: Vec2, other: Collidable) {
+      console.log(normal);
       let entity = other as PhysicsEntity;
 
       if (entity.getType() === "Wall") {

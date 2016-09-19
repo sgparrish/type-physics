@@ -14,6 +14,10 @@ export default class World {
       this.collisionPairs = new Heap<CollisionPair>(CollisionPair.compare);
    }
 
+   public add(collidable: Collidable) {
+      this.collidables.push(collidable);
+   }
+
    public step(delta: number): void {
       let scaledDelta = Math.round(delta / DELTA_SCALE * 100) / 100;
       this.generateAABBs(scaledDelta);

@@ -3,40 +3,38 @@ import World from "../physics/world";
 
 export default class Renderer {
 
-   private _body: HTMLElement;
-   private _canvas: HTMLCanvasElement;
-   private _context: CanvasRenderingContext2D;
+   public static canvas: HTMLCanvasElement;
+   public static context: CanvasRenderingContext2D;
 
-   private _resize;
+   public static _resize: () => void;
 
-   public constructor(body: HTMLElement) {
-      this._body = body;
-      this._canvas = document.createElement("canvas");
-      this._context = this._canvas.getContext("2d");
-      document.body.appendChild(this._canvas);
+   public static initialize() {
+      this.canvas = document.createElement("canvas");
+      this.context = this.canvas.getContext("2d");
+      document.body.appendChild(this.canvas);
       this._resize = () => { this.resize() }
       this._resize();
       window.addEventListener('resize', this._resize);
    }
 
-   private resize(): void {
+   public static resize(): void {
       let element = document.documentElement;
-      this._canvas.width = element.clientWidth;
-      this._canvas.height = element.clientHeight;
+      this.canvas.width = element.clientWidth;
+      this.canvas.height = element.clientHeight;
    }
 
-   public clear(): void {
-      this._context.clearRect(
+   public static clear(): void {
+      this.context.clearRect(
          0,
          0,
-         this._canvas.width,
-         this._canvas.height
+         this.canvas.width,
+         this.canvas.height
       );
    }
 
-   public drawRectangle(rect: Rectangle, color: string = "#000000"): void {
-      this._context.strokeStyle = color;
-      this._context.strokeRect(
+   public static drawRectangle(rect: Rectangle, color: string = "#000000"): void {
+      this.context.strokeStyle = color;
+      this.context.strokeRect(
          rect.x,
          rect.y,
          rect.width,
@@ -44,7 +42,7 @@ export default class Renderer {
       );
    }
 
-   public drawWorld(world: World): void {
+   public static drawWorld(world: World): void {
       this.clear();
       for (let collidable of world.collidables) {
          this.drawRectangle(collidable.getRectangle());
@@ -54,10 +52,10 @@ export default class Renderer {
       }
    }
 
-   public drawText(text: string, color: string = "#000000"): void {
-      this._context.strokeStyle = color;
-      this._context.font = "12px Monospace";
-      this._context.fillText(text, 0, 12);
+   public static drawText(text: string, color: string = "#000000"): void {
+      this.context.strokeStyle = color;
+      this.context.font = "12px Monospace";
+      this.context.fillText(text, 0, 12);
    }
 
 }

@@ -4,26 +4,28 @@ import World from "./physics/world";
 import Renderer from "./graphics/renderer";
 import Wall from "./game/wall";
 import Player from "./game/player";
-import {GameScreen} from "./gamescreen";
+import GameScreen from "./gamescreen";
+import Stage from "./game/stage"
 
 export default class PhysicsScreen extends GameScreen {
 
-   private _world: World;
+   private _stage: Stage;
    private _renderer: Renderer;
 
    protected setup(): void {
-      this._world = new World();
-      this._renderer = new Renderer(document.body);
+      this._stage = new Stage();
       let p = new Player(0, 300);
       let w = new Wall(0, 0);
-      this._world.collidables.push(w, p);
+      this._stage.add(p, true);
+      this._stage.add(w, true);
+      Renderer.initialize();
    }
    protected update(delta: number): void {
-      this._world.step(delta);
+      this._stage.update(delta);
    }
    protected render(interpPercent: number): void {
-      this._renderer.drawWorld(this._world);
-      this._renderer.drawText("fps: " + this.fps.toFixed(0));
+      this._stage.render(interpPercent);
+      Renderer.drawText("fps: " + Math.round(this.fps));
    }
    protected end(): void {
 
