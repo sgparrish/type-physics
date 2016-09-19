@@ -1,19 +1,17 @@
 import Vec2 from "./vec2";
 import Collidable from "./collidable";
 import CollisionPair from "./collisionpair";
-import * as Collections from "typescript-collections";
+import Heap from "../datastructure/heap";
 
 const DELTA_SCALE = 1000 / 6;
 
 export default class World {
    public collidables: Collidable[];
-   public collisionPairs: Collections.PriorityQueue<CollisionPair>;
-   public collisionPairMap: Collections.MultiDictionary<Collidable, CollisionPair>;
+   public collisionPairs: Heap<CollisionPair>;
 
    public constructor() {
       this.collidables = [];
-      this.collisionPairs = new Collections.PriorityQueue<CollisionPair>(CollisionPair.compare);
-      this.collisionPairMap = new Collections.MultiDictionary<Collidable, CollisionPair>()
+      this.collisionPairs = new Heap<CollisionPair>(CollisionPair.compare);
    }
 
    public step(delta: number): void {
@@ -25,29 +23,7 @@ export default class World {
    }
 
    private addPair(pair: CollisionPair): void {
-      this.collisionPairs.enqueue(pair);
-      this.collisionPairMap.setValue(pair.collidableA, pair);
-      this.collisionPairMap.setValue(pair.collidableB, pair);
-   }
-
-   private getNextPair(): CollisionPair {
-      if (!this.collisionPairs.isEmpty()) {
-         let pair = this.collisionPairs.dequeue();
-         if (this.collisionPairMap.containsKey(pair.collidableA)) {
-            this.collisionPairMap.remove(pair.collidableA, pair);
-         }
-         if (this.collisionPairMap.containsKey(pair.collidableB)) {
-            this.collisionPairMap.remove(pair.collidableB, pair);
-         }
-         return pair;
-      }
-      return null;
-   }
-
-   private removePair(pair: CollisionPair): void {
-      pair.valid = false;
-      this.collisionPairMap.remove(pair.collidableA, pair);
-      this.collisionPairMap.remove(pair.collidableB, pair);
+      this.collisionPairs.add(pair);
    }
 
    private generateAABBs(delta: number): void {
@@ -72,8 +48,8 @@ export default class World {
       let lastCollision: number = 0.0;
       let timeRemaining: number = 1.0;
       let pair: CollisionPair;
-      while (!this.collisionPairs.isEmpty()) {
-         pair = this.getNextPair();
+      while (this.collisionPairs.getSize() > 0) {
+         pair = this.collisionPairs.removeRoot();
          if (pair.valid && pair.collisionTime >= 0 && pair.collisionTime <= timeRemaining) {
             // Deactivate any aliases of this pair
             pair.valid = false;
@@ -98,32 +74,14 @@ export default class World {
       }
    }
    private cleanPairs(donePair: CollisionPair, delta: number, timeRemaining: number) {
-      let pairs = this.collisionPairMap.getValue(donePair.collidableA);
-      for (let iPair of pairs) {
-         if (iPair.containsEither(donePair)) {
-            // If iPair has a regen pairs collidable, then remove (mark invalid)
-            if ((iPair.contains(donePair.collidableA) && donePair.collidableA.regenPairs) ||
-               (iPair.contains(donePair.collidableB) && donePair.collidableB.regenPairs)) {
-               this.removePair(iPair);
-            } else {
-               // Don't remove, just re-calculate collision time and re-add to p-queue
-               iPair.calculateCollisionTime(delta, timeRemaining);
-               this.collisionPairs.add(iPair);
-            }
-         }
-      }
-      pairs = this.collisionPairMap.getValue(donePair.collidableB);
-      for (let iPair of pairs) {
-         if (iPair.containsEither(donePair)) {
-            // If iPair has a regen pairs collidable, then remove (mark invalid)
-            if ((iPair.contains(donePair.collidableA) && donePair.collidableA.regenPairs) ||
-               (iPair.contains(donePair.collidableB) && donePair.collidableB.regenPairs)) {
-               this.removePair(iPair);
-            } else {
-               // Don't remove, just re-calculate collision time and re-add to p-queue
-               iPair.calculateCollisionTime(delta, timeRemaining);
-               this.collisionPairs.add(iPair);
-            }
+      let pairArray = this.collisionPairs.getArray();
+      for (let index = 0; index < this.collisionPairs.getSize(); index++) {
+         let pair = pairArray[index];
+         if ((pair.contains(donePair.collidableA) && donePair.collidableA.regenPairs) ||
+            (pair.contains(donePair.collidableB) && donePair.collidableB.regenPairs)) {
+            this.collisionPairs.remove(index);
+         } else if (pair.contains(donePair.collidableA) || pair.contains(donePair.collidableB)) {
+            this.collisionPairs.update(index);
          }
       }
    }
@@ -133,14 +91,14 @@ export default class World {
          if (donePair.collidableA.regenPairs) {
             pair = new CollisionPair(this.collidables[i], donePair.collidableA);
             if (pair.aabbsOverlap()) {
-               pair.calculateCollisionTime(delta, 1.0);
+               pair.calculateCollisionTime(delta, timeRemaining);
                this.addPair(pair);
             }
          }
          if (donePair.collidableB.regenPairs) {
             pair = new CollisionPair(this.collidables[i], donePair.collidableB);
             if (pair.aabbsOverlap()) {
-               pair.calculateCollisionTime(delta, 1.0);
+               pair.calculateCollisionTime(delta, timeRemaining);
                this.addPair(pair);
             }
          }
@@ -149,6 +107,5 @@ export default class World {
 
    private cleanUp(): void {
       this.collisionPairs.clear();
-      this.collisionPairMap.clear();
    }
 }

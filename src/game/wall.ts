@@ -1,0 +1,21 @@
+import Vec2 from "../physics/vec2";
+import Collidable from "../physics/collidable";
+import PhysicsEntity from "./physicsentity";
+
+export default class Wall extends PhysicsEntity {
+
+   public constructor(x, y) {
+      super("Wall");
+      this.position = new Vec2(x, y);
+      this.dimension = new Vec2(100, 100);
+      this.moveable = false;
+   }
+
+   public render(interpPercent: number): void {
+   }
+   public update(delta: number): void {
+   }
+   public collision(time: number, normal: Vec2, other: Collidable): void {
+   }
+
+}

@@ -2,6 +2,8 @@ import Vec2 from "./physics/vec2";
 import Collidable from "./physics/collidable";
 import World from "./physics/world";
 import Renderer from "./graphics/renderer";
+import Wall from "./game/wall";
+import Player from "./game/player";
 import {GameScreen} from "./gamescreen";
 
 export default class PhysicsScreen extends GameScreen {
@@ -12,18 +14,9 @@ export default class PhysicsScreen extends GameScreen {
    protected setup(): void {
       this._world = new World();
       this._renderer = new Renderer(document.body);
-      this._world.collidables.push(
-         new Collidable(
-            new Vec2(10, 10),
-            new Vec2(20, 20),
-            new Vec2(100, 100)
-         ),
-         new Collidable(
-            new Vec2(200, 300),
-            new Vec2(0, -4),
-            new Vec2(100, 100)
-         )
-      );
+      let p = new Player(0, 300);
+      let w = new Wall(0, 0);
+      this._world.collidables.push(w, p);
    }
    protected update(delta: number): void {
       this._world.step(delta);

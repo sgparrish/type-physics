@@ -89,7 +89,7 @@ export default class CollisionPair {
    }
    public reportCollision(): void {
       this.collidableA.collide(this.collisionTime, this.collisionNormal, this.collidableB);
-      this.collidableB.collide(this.collisionTime, this.collisionNormal, this.collidableA);
+      this.collidableB.collide(this.collisionTime, this.collisionNormal.negate(), this.collidableA);
    }
    public regenerateAABBs(delta: number, timeRemaining: number): void {
       this.collidableA.regenerateAABB(delta, timeRemaining, true);

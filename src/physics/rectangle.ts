@@ -55,10 +55,10 @@ export default class Rectangle {
    }
 
    public contains(other: Rectangle): boolean {
-      return Utils.lt(this.left, other.left) && // this.left < other.left
-      Utils.gt(this.right, other.right) && // this.right > other.right
-      Utils.lt(this.top, other.top) && // this.top > other.top
-      Utils.gt(this.bottom, other.bottom); // this.bottom > other.bottom
+      return Utils.lte(this.left, other.left) && // this.left < other.left
+      Utils.gte(this.right, other.right) && // this.right > other.right
+      Utils.lte(this.top, other.top) && // this.top > other.top
+      Utils.gte(this.bottom, other.bottom); // this.bottom > other.bottom
    }
 
    public merge(other: Rectangle): Rectangle {

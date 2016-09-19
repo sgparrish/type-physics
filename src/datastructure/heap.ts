@@ -90,6 +90,9 @@ export default class Heap<T> {
          this.siftDown(index);
       }
    }
+   public clear(): void {
+      this._size = 0;
+   }
 
    private siftUp(index: number): void {
       // Compare vs parent
