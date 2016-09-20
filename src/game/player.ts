@@ -8,10 +8,10 @@ import CommandMap from "../input/commandmap";
 
 export default class Player extends PhysicsEntity {
 
-   public constructor(x, y) {
+   public constructor() {
       super("Player");
-      this.position = new Vec2(x, y);
-      this.velocity = new Vec2(-2.34, -2.35);
+      this.position = new Vec2(200, 200);
+      this.velocity = new Vec2(0, 0);
       this.dimension = new Vec2(100, 100);
       this.listener = this;
    }
@@ -25,8 +25,11 @@ export default class Player extends PhysicsEntity {
 
       if (entity.getType() === "Wall") {
          orthoComponent *= 0.5;
-         normalComponent *= -0.5;
-         this.velocity = normal.times(normalComponent).add(ortho.times(orthoComponent));
+         if (normalComponent < 0) {
+            normalComponent *= -0.5;
+         }
+         this.velocity = normal.times(normalComponent)
+         this.velocity = this.velocity.add(ortho.times(orthoComponent));
       }
    }
 
@@ -34,7 +37,6 @@ export default class Player extends PhysicsEntity {
 
    }
    public update(delta: number) {
-      this.velocity = this.velocity.add(new Vec2(-5, -5));
       if (CommandMap.getCommand(Command.LEFT) !== 0) {
          this.velocity = this.velocity.add(new Vec2(-5, 0));
       }
@@ -51,7 +53,7 @@ export default class Player extends PhysicsEntity {
          this.velocity = new Vec2(0, 0);
       }
       this.velocity = this.velocity.clamp(15);
-      console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
+      //console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
    }
 
 }

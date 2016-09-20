@@ -14,11 +14,13 @@ export default class PhysicsScreen extends GameScreen {
 
    protected setup(): void {
       this._stage = new Stage();
-      this._stage.add(new Player(100.19, 100.18), true);
-      this._stage.add(new Wall(0, 0), true);
-      for (let i = 1; i < 2; i++) {
+      this._stage.add(new Player(), true);
+      this._stage.add(new Wall(300, 300), true);
+      for (let i = 1; i < 6; i++) {
          this._stage.add(new Wall(i * 100, 0), true);
+         this._stage.add(new Wall(i * 100, 600), true);
          this._stage.add(new Wall(0, i * 100), true);
+         this._stage.add(new Wall(600, i * 100), true);
       }
    }
    protected update(delta: number): void {

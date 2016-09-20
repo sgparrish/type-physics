@@ -15,6 +15,9 @@ export default class Renderer {
       this._resize = () => { this.resize() }
       this._resize();
       window.addEventListener('resize', this._resize);
+
+      //this.context.translate(400, 400);
+      //this.context.scale(0.5, 0.5);
    }
 
    public static resize(): void {
@@ -24,12 +27,15 @@ export default class Renderer {
    }
 
    public static clear(): void {
+      this.context.save();
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.clearRect(
          0,
          0,
          this.canvas.width,
          this.canvas.height
       );
+      this.context.restore();
    }
 
    public static drawRectangle(rect: Rectangle, color: string = "#000000"): void {

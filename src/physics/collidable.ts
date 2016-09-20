@@ -37,7 +37,7 @@ export default class Collidable {
    }
 
    public set position(vec: Vec2) {
-      this._position = vec.round();
+      this._position = vec.round(1);
    }
    public set velocity(vec: Vec2) {
       if (this.moveable) {
@@ -45,7 +45,7 @@ export default class Collidable {
       }
    }
    public set dimension(vec: Vec2) {
-      this._dimension = vec.round();
+      this._dimension = vec.round(1);
    }
 
    public getRectangle(): Rectangle {

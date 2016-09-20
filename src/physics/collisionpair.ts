@@ -32,7 +32,8 @@ export default class CollisionPair {
 
    public getMinkowskiRectangle(): Rectangle {
       // Position of rect is b.position - a.position - a.dimension
-      let position: Vec2 = this.collidableB.position.sub(this.collidableA.position).sub(this.collidableA.dimension);
+      let position: Vec2 = this.collidableB.position.sub(this.collidableA.position)
+      position = position.sub(this.collidableA.dimension);
       // Dimension of rect is a.dimension + b.dimension
       let dimension: Vec2 = this.collidableA.dimension.add(this.collidableB.dimension);
       return new Rectangle(position.x, position.y, dimension.x, dimension.y);
