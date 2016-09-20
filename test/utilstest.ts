@@ -11,6 +11,7 @@ export default class UtilsTest extends tsUnit.TestClass {
 
    testNearlyEqual() {
       this.isTrue(Utils.nearlyEqual(268.33, 100 + 168.33));
+      this.isFalse(Utils.nearlyEqual(99.94, 100));
    }
 
 }

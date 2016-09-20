@@ -10,7 +10,7 @@ export default class CollisionPair {
    public collidableB: Collidable;
 
    public collisionTime: number;
-   public collisionNormal:Vec2;
+   public collisionNormal: Vec2;
 
    public constructor(collidableA: Collidable, collidableB: Collidable) {
       this.valid = true;
@@ -57,30 +57,30 @@ export default class CollisionPair {
          time = rectangle.left / velocity.x;
          if (time >= 0 && time <= minTime) {
             minTime = time;
-            normal = normal.add(new Vec2(-1, 0));
+            normal = new Vec2(-1, 0);
          }
 
          // Check Right edge
          time = rectangle.right / velocity.x;
          if (time >= 0 && time <= minTime) {
             minTime = time;
-            normal = normal.add(new Vec2(1, 0));
+            normal = new Vec2(1, 0);
          }
       }
 
       if (velocity.y != 0) {
          // Check Top edge
          time = rectangle.top / velocity.y;
-         if (time >= 0 && time < minTime) {
+         if (time >= 0 && time <= minTime) {
             minTime = time;
-            normal = normal.add(new Vec2(0, -1));
+            normal = new Vec2(0, -1);
          }
 
          // Check Bottom edge
          time = rectangle.bottom / velocity.y;
-         if (time >= 0 && time < minTime) {
+         if (time >= 0 && time <= minTime) {
             minTime = time;
-            normal = normal.add(new Vec2(0, 1));
+            normal = new Vec2(0, 1);
          }
       }
 

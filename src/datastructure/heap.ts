@@ -69,7 +69,7 @@ export default class Heap<T> {
       // Swap with last element in tree
       let value: T = this._data[index];
       this._data[index] = this._data[this._size - 1];
-      this._data[this._size - 1] = value;
+      this._data[this._size - 1] = null;
 
       // Remove last element & sift up or down
       this._size -= 1
