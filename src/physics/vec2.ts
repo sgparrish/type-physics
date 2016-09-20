@@ -43,7 +43,7 @@ export default class Vec2 {
       return new Vec2(this._x / divisor, this._y / divisor);
    }
    public dot(other: Vec2): number {
-      return this._x * other._y + this._y * other._x;
+      return this._x * other._x + this._y * other._y;
    }
    public cross(other: Vec2): number {
       return this._x * other._y - this._y * other._x;
@@ -54,5 +54,19 @@ export default class Vec2 {
          Utils.round(this._x, places),
          Utils.round(this._y, places)
       );
+   }
+   public clamp(maxLength: number): Vec2 {
+      let curLength = this.length();
+      if (curLength > maxLength) {
+         return this.times(maxLength / curLength);
+      }
+      return this;
+   }
+   public rotate90(clockwise: boolean = true): Vec2 {
+      if (clockwise) {
+         return new Vec2(this._y, -this._x);
+      } else {
+         return new Vec2(-this._y, this._x);
+      }
    }
 }

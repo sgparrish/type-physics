@@ -1,6 +1,6 @@
 const MIN_NORMAL = 2.220446049250313e-16;
 const DEFAULT_PRECISION = 2;
-const DEFAULT_EPSILON = 0.001;
+const DEFAULT_EPSILON = 0.0001;
 
 export default class Utils {
    public static round(operand: number, places: number = DEFAULT_PRECISION): number {

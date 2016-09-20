@@ -2,6 +2,7 @@ import Vec2 from "./vec2";
 import Collidable from "./collidable";
 import CollisionPair from "./collisionpair";
 import Heap from "../datastructure/heap";
+import Utils from "../utils";
 
 const DELTA_SCALE = 1000 / 6;
 
@@ -58,7 +59,7 @@ export default class World {
             // Deactivate any aliases of this pair
             pair.valid = false;
             // Move up to collision
-            this.simulateMovement(delta, pair.collisionTime - lastCollision);
+            this.simulateMovement(delta, pair.collisionTime);
             // Update time to reflect how far we have simulated
             lastCollision += pair.collisionTime;
             timeRemaining -= pair.collisionTime;
@@ -84,7 +85,9 @@ export default class World {
          if ((pair.contains(donePair.collidableA) && donePair.collidableA.regenPairs) ||
             (pair.contains(donePair.collidableB) && donePair.collidableB.regenPairs)) {
             this.collisionPairs.remove(index);
+            index -= 1;
          } else if (pair.contains(donePair.collidableA) || pair.contains(donePair.collidableB)) {
+            pair.calculateCollisionTime(delta, timeRemaining);
             this.collisionPairs.update(index);
          }
       }
@@ -92,14 +95,14 @@ export default class World {
    private regenPairs(donePair: CollisionPair, delta: number, timeRemaining: number) {
       let pair: CollisionPair;
       for (let i: number = 0; i < this.collidables.length; i++) {
-         if (donePair.collidableA.regenPairs) {
-            pair = new CollisionPair(this.collidables[i], donePair.collidableA);
+         if (donePair.collidableA.regenPairs && donePair.collidableA !== this.collidables[i]) {
+            pair = new CollisionPair(donePair.collidableA, this.collidables[i]);
             if (pair.aabbsOverlap()) {
                pair.calculateCollisionTime(delta, timeRemaining);
                this.addPair(pair);
             }
          }
-         if (donePair.collidableB.regenPairs) {
+         if (donePair.collidableB.regenPairs && donePair.collidableB !== this.collidables[i]) {
             pair = new CollisionPair(this.collidables[i], donePair.collidableB);
             if (pair.aabbsOverlap()) {
                pair.calculateCollisionTime(delta, timeRemaining);

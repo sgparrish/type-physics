@@ -6,7 +6,7 @@ export default class Renderer {
    public static canvas: HTMLCanvasElement;
    public static context: CanvasRenderingContext2D;
 
-   public static _resize: () => void;
+   private static _resize: () => void;
 
    public static initialize() {
       this.canvas = document.createElement("canvas");
@@ -57,5 +57,5 @@ export default class Renderer {
       this.context.font = "12px Monospace";
       this.context.fillText(text, 0, 12);
    }
-
 }
+Renderer.initialize();
