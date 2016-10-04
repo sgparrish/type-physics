@@ -1,5 +1,5 @@
 import Vec2 from "../physics/vec2";
-import Collidable from "../physics/collidable";
+import Body from "../physics/body";
 import PhysicsEntity from "./physicsentity";
 
 export default class Wall extends PhysicsEntity {
@@ -15,7 +15,7 @@ export default class Wall extends PhysicsEntity {
    }
    public update(delta: number): void {
    }
-   public collision(time: number, normal: Vec2, other: Collidable): void {
+   public collision(normal: Vec2, other: Body): void {
    }
 
 }

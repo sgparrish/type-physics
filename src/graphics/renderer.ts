@@ -50,11 +50,8 @@ export default class Renderer {
 
    public static drawWorld(world: World): void {
       this.clear();
-      for (let collidable of world.collidables) {
+      for (let collidable of world.bodies) {
          this.drawRectangle(collidable.getRectangle());
-         if (collidable.aabb !== null) {
-            this.drawRectangle(collidable.aabb, '#ff0000');
-         }
       }
    }
 

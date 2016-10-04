@@ -1,9 +1,9 @@
 import Entity from "./entity";
 import Vec2 from "../physics/vec2";
-import Collidable from "../physics/collidable";
+import Body from "../physics/body";
 import CollisionListener from "../physics/collisionlistener";
 
-abstract class PhysicsEntity extends Collidable implements Entity, CollisionListener {
+abstract class PhysicsEntity extends Body implements Entity, CollisionListener {
 
    private type: string;
 
@@ -17,6 +17,6 @@ abstract class PhysicsEntity extends Collidable implements Entity, CollisionList
    }
    public abstract render(interpPercent: number): void;
    public abstract update(delta: number): void;
-   public abstract collision(time: number, normal: Vec2, other: Collidable);
+   public abstract collision(normal: Vec2, other: Body);
 }
 export default PhysicsEntity;

@@ -1,5 +1,5 @@
 import Vec2 from "../physics/vec2";
-import Collidable from "../physics/collidable";
+import Body from "../physics/body";
 import CollisionListener from "../physics/collisionlistener";
 import Entity from "./entity";
 import PhysicsEntity from "./physicsentity";
@@ -10,13 +10,13 @@ export default class Player extends PhysicsEntity {
 
    public constructor() {
       super("Player");
-      this.position = new Vec2(200, 200);
-      this.velocity = new Vec2(0, 0);
+      this.position = new Vec2(250, 200);
+      this.velocity = new Vec2(0, 1);
       this.dimension = new Vec2(100, 100);
       this.listener = this;
    }
 
-   public collision(time: number, normal: Vec2, other: Collidable) {
+   public collision(normal: Vec2, other: Body) {
       let entity = other as PhysicsEntity;
 
       let ortho = normal.rotate90();
@@ -24,9 +24,9 @@ export default class Player extends PhysicsEntity {
       let orthoComponent = this.velocity.dot(ortho);
 
       if (entity.getType() === "Wall") {
-         orthoComponent *= 0.5;
+         orthoComponent *= 0;//0.5;
          if (normalComponent < 0) {
-            normalComponent *= -0.5;
+            normalComponent *= 0;//-0.5;
          }
          this.velocity = normal.times(normalComponent)
          this.velocity = this.velocity.add(ortho.times(orthoComponent));
@@ -38,22 +38,22 @@ export default class Player extends PhysicsEntity {
    }
    public update(delta: number) {
       if (CommandMap.getCommand(Command.LEFT) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(-5, 0));
+         this.velocity = this.velocity.add(new Vec2(-100, 0));
       }
       if (CommandMap.getCommand(Command.RIGHT) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(5, 0));
+         this.velocity = this.velocity.add(new Vec2(100, 0));
       }
       if (CommandMap.getCommand(Command.UP) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(0, -5));
+         this.velocity = this.velocity.add(new Vec2(0, -100));
       }
       if (CommandMap.getCommand(Command.DOWN) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(0, 5));
+         this.velocity = this.velocity.add(new Vec2(0, 100));
       }
       if (CommandMap.getCommand(Command.DEBUG) !== 0) {
          this.velocity = new Vec2(0, 0);
       }
-      this.velocity = this.velocity.clamp(15);
-      //console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
+      this.velocity = this.velocity.clamp(400);
+      console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
    }
 
 }

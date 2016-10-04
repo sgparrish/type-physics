@@ -1,7 +1,7 @@
 import Vec2 from "./vec2";
-import Collidable from "./collidable";
+import Body from "./body";
 
 export default CollisionListener;
 interface CollisionListener {
-   collision(time: number, normal: Vec2, other: Collidable): void;
+   collision(noraml: Vec2, other: Body): void;
 }

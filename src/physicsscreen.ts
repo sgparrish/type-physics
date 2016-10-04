@@ -1,6 +1,3 @@
-import Vec2 from "./physics/vec2";
-import Collidable from "./physics/collidable";
-import World from "./physics/world";
 import Renderer from "./graphics/renderer";
 import Wall from "./game/wall";
 import Player from "./game/player";
