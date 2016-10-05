@@ -1,17 +1,15 @@
 import Vec2 from "./vec2";
 import Rectangle from "./rectangle";
 import Body from "./body";
-import Quadtree from "./quadtree";
+import Utils from "../utils";
+
+const MAX_DELTA_ADJUST = 2;
 
 export default class World {
 
-   public bounds: Rectangle;
-   public quadtree: Quadtree;
    public bodies: Body[];
 
    public constructor() {
-      this.bounds = new Rectangle(0, 0, 700, 700);
-      this.quadtree = new Quadtree(this.bounds);
       this.bodies = [];
    }
 
@@ -20,20 +18,16 @@ export default class World {
    }
 
    public step(delta: number): void {
+      let d = delta / 1000;
 
       // Move everything
-      this.simulate(delta / 1000);
+      this.simulate(d);
 
-      // Regenerate quadtree
-      this.quadtree.clear();
-      for (let body of this.bodies) {
-         this.quadtree.insert(body);
-      }
-      // Get sets and turn them into pairs
-      let pairs = this.getPairsFromSets(this.quadtree.getSets());
-
-      for (let pair of pairs) {
-         this.collide(pair[0], pair[1]);
+      // Collide everything against each other
+      for (let i = 0; i < this.bodies.length; i++) {
+         for (let j = i + 1; j < this.bodies.length; j++) {
+            this.collide(d, this.bodies[i], this.bodies[j]);
+         }
       }
    }
 
@@ -43,63 +37,95 @@ export default class World {
       }
    }
 
-   private getPairsFromSets(sets: Body[][]) {
-      let pairs: [Body, Body][] = [];
-      for (let set of sets) {
-         for (let i = 0; i < set.length; i++) {
-            for (let j = i; j < set.length; j++) {
-               if (set[i] !== set[j]) {
-                  pairs.push([set[i], set[j]]);
-               }
-            }
-         }
-      }
-      return pairs;
-   }
-
-   private collide(bodyA: Body, bodyB: Body): void {
+   private collide(delta: number, bodyA: Body, bodyB: Body): void {
       let rectA = bodyA.getRectangle();
       let rectB = bodyB.getRectangle();
       // Are A and B overlapping?
       if (rectA.overlaps(rectB)) {
-         // Get minimum penetration vector
-         let minP = Number.MAX_VALUE;
-         let minV: Vec2;
+         this.separateY(delta, bodyA, bodyB);
 
-         let pL = rectA.left - rectB.right;
-         if (Math.abs(pL) < Math.abs(minP)) {
-            minP = pL;
-            minV = new Vec2(pL, 0);
+         rectA = bodyA.getRectangle();
+         rectB = bodyB.getRectangle();
+         if (rectA.overlaps(rectB)) {
+            this.separateX(delta, bodyA, bodyB);
          }
-         let pR = rectA.right - rectB.left;
-         if (Math.abs(pR) < Math.abs(minP)) {
-            minP = pR;
-            minV = new Vec2(pR, 0);
-         }
-         let pT = rectA.top - rectB.bottom;
-         if (Math.abs(pT) < Math.abs(minP)) {
-            minP = pT;
-            minV = new Vec2(0, pT);
-         }
-         let pB = rectA.bottom - rectB.top;
-         if (Math.abs(pB) < Math.abs(minP)) {
-            minP = pB;
-            minV = new Vec2(0, pB);
-         }
+      }
+   }
 
-         // Response
-         if (bodyA.moveable && !bodyB.moveable) {
-            bodyA.position = bodyA.position.sub(minV);
-         } else if (!bodyA.moveable && bodyB.moveable) {
-            bodyB.position = bodyB.position.add(minV);
-         } else if (bodyA.moveable && bodyB.moveable) {
-            bodyA.position = bodyA.position.sub(minV.divide(2));
-            bodyB.position = bodyB.position.add(minV.divide(2));
-         }
+   private separateX(delta: number, bodyA: Body, bodyB: Body): void {
+      let rectA = bodyA.getRectangle();
+      let rectB = bodyB.getRectangle();
+      let overlap: number;
+      let maxOverlap = Math.abs(bodyA.velocity.x * delta) + Math.abs(bodyB.velocity.x * delta) + MAX_DELTA_ADJUST;
 
-         bodyA.collide(minV.normalize(), bodyB);
-         bodyB.collide(minV.normalize().negate(), bodyA);
+      if (bodyA.velocity.x > bodyB.velocity.x && bodyA.collideDirections.right && bodyB.collideDirections.left) {
+         // Collide bodyA's right side with bodyB's left
+         overlap = rectA.right - rectB.left;
+      } else if (bodyA.velocity.x < bodyB.velocity.x && bodyA.collideDirections.left && bodyB.collideDirections.right) {
+         // Collide bodyA's left side with bodyB's right
+         overlap = rectA.left - rectB.right;
+      } else {
+         return;
+      }
+      if (Math.abs(overlap) > maxOverlap + 1) {
+         return;
+      }
 
+      if (bodyA.moveable && bodyB.moveable) {
+         // Move both bodies half
+         bodyA.position = bodyA.position.sub(new Vec2(overlap * 0.5, 0));
+         bodyB.position = bodyB.position.add(new Vec2(overlap * 0.5, 0));
+
+         let avgVel = (bodyA.velocity.x + bodyB.velocity.x) * 0.5;
+
+         bodyA.velocity = new Vec2(avgVel, bodyA.velocity.y);
+         bodyB.velocity = new Vec2(avgVel, bodyB.velocity.y);
+      } else if (bodyA.moveable) {
+         // Just body A is movable
+         bodyA.position = bodyA.position.sub(new Vec2(overlap, 0));
+         bodyA.velocity = new Vec2(bodyB.velocity.x, bodyA.velocity.y);
+      } else if (bodyB.moveable) {
+         // Just body B is movable
+         bodyB.position = bodyB.position.add(new Vec2(overlap, 0));
+         bodyB.velocity = new Vec2(bodyA.velocity.x, bodyB.velocity.y);
+      }
+   }
+   private separateY(delta: number, bodyA: Body, bodyB: Body): void {
+      let rectA = bodyA.getRectangle();
+      let rectB = bodyB.getRectangle();
+      let overlap: number;
+      let maxOverlap = Math.abs(bodyA.velocity.y * delta) + Math.abs(bodyB.velocity.y * delta) + MAX_DELTA_ADJUST;
+
+      if (bodyA.velocity.y < bodyB.velocity.y && bodyA.collideDirections.top && bodyB.collideDirections.bottom) {
+         // Collide bodyA's top side with bodyB's bottom
+         overlap = rectA.top - rectB.bottom
+      } else if (bodyA.velocity.y > bodyB.velocity.y && bodyA.collideDirections.bottom && bodyB.collideDirections.top) {
+         // Collide bodyA's bottom side with bodyB's top
+         overlap = rectA.bottom - rectB.top;
+      } else {
+         return;
+      }
+      if (Math.abs(overlap) > maxOverlap + 1) {
+         return;
+      }
+
+      if (bodyA.moveable && bodyB.moveable) {
+         // Move both bodies half
+         bodyA.position = bodyA.position.sub(new Vec2(0, overlap * 0.5));
+         bodyB.position = bodyB.position.add(new Vec2(0, overlap * 0.5));
+
+         let avgVel = (bodyA.velocity.y + bodyB.velocity.y) * 0.5;
+
+         bodyA.velocity = new Vec2(bodyA.velocity.y, avgVel);
+         bodyB.velocity = new Vec2(bodyB.velocity.y, avgVel);
+      } else if (bodyA.moveable) {
+         // Just body A is movable
+         bodyA.position = bodyA.position.sub(new Vec2(0, overlap));
+         bodyA.velocity = new Vec2(bodyA.velocity.x, bodyB.velocity.y);
+      } else if (bodyB.moveable) {
+         // Just body B is movable
+         bodyB.position = bodyB.position.add(new Vec2(0, overlap));
+         bodyB.velocity = new Vec2(bodyB.velocity.x, bodyA.velocity.y);
       }
    }
 

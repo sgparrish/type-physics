@@ -10,8 +10,8 @@ export default class Player extends PhysicsEntity {
 
    public constructor() {
       super("Player");
-      this.position = new Vec2(250, 200);
-      this.velocity = new Vec2(0, 1);
+      this.position = new Vec2(494.50360121928213, 499.99999999999994);
+      this.velocity = new Vec2(391.9807566419398, 79.69370378149293);
       this.dimension = new Vec2(100, 100);
       this.listener = this;
    }
@@ -22,11 +22,11 @@ export default class Player extends PhysicsEntity {
       let ortho = normal.rotate90();
       let normalComponent = this.velocity.dot(normal);
       let orthoComponent = this.velocity.dot(ortho);
-
+      
       if (entity.getType() === "Wall") {
-         orthoComponent *= 0;//0.5;
+         orthoComponent *= 0.5;
          if (normalComponent < 0) {
-            normalComponent *= 0;//-0.5;
+            normalComponent *= -0.5;
          }
          this.velocity = normal.times(normalComponent)
          this.velocity = this.velocity.add(ortho.times(orthoComponent));
@@ -53,7 +53,7 @@ export default class Player extends PhysicsEntity {
          this.velocity = new Vec2(0, 0);
       }
       this.velocity = this.velocity.clamp(400);
-      console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
+      // console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
    }
 
 }

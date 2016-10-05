@@ -64,6 +64,7 @@ abstract class GameScreen {
 
          numUpdates++;
          if (numUpdates > this._panicUpdates) {
+            this._frameDelta = 0; // skip to now
             break;
          }
       }

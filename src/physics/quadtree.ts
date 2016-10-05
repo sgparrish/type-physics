@@ -60,6 +60,19 @@ export default class QuadTree {
       return sets;
    }
 
+   public getPairs(): [Body, Body][] {
+      let sets = this.getSets();
+      let pairs: [Body, Body][] = [];
+      for (let set of sets) {
+         for (let i = 0; i < set.length; i++) {
+            for (let j = i + 1; j < set.length; j++) {
+               pairs.push([set[i], set[j]]);
+            }
+         }
+      }
+      return pairs;
+   }
+
    private split(): void {
       let width = this.rectangle.dimension.x / 2;
       let height = this.rectangle.dimension.y / 2;

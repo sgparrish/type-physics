@@ -1,4 +1,5 @@
 import Vec2 from "./vec2";
+import Direction from "./direction";
 import Rectangle from "./rectangle";
 import CollisionListener from "./collisionlistener";
 
@@ -9,11 +10,16 @@ export default class Body {
    private _dimension: Vec2;
 
    public moveable: boolean;
+
+   public collideDirections: Direction;
+
    public listener: CollisionListener;
 
    public constructor(pos: Vec2, vel: Vec2, dim: Vec2) {
       this.moveable = true;
       
+      this.collideDirections = new Direction(true);
+
       this.position = pos;
       this.velocity = vel;
       this.dimension = dim;
