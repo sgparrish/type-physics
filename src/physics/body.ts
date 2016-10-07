@@ -5,9 +5,9 @@ import CollisionListener from "./collisionlistener";
 
 export default class Body {
 
-   private _position: Vec2;
-   private _velocity: Vec2;
-   private _dimension: Vec2;
+   public position: Vec2;
+   public velocity: Vec2;
+   public dimension: Vec2;
 
    public moveable: boolean;
 
@@ -17,32 +17,12 @@ export default class Body {
 
    public constructor(pos: Vec2, vel: Vec2, dim: Vec2) {
       this.moveable = true;
-      
+
       this.collideDirections = new Direction(true);
 
       this.position = pos;
       this.velocity = vel;
       this.dimension = dim;
-   }
-
-   public get position(): Vec2 {
-      return this._position;
-   }
-   public get velocity(): Vec2 {
-      return this._velocity;
-   }
-   public get dimension(): Vec2 {
-      return this._dimension;
-   }
-
-   public set position(pos: Vec2) {
-      this._position = pos;
-   }
-   public set velocity(vel: Vec2) {
-      this._velocity = vel;
-   }
-   public set dimension(dim: Vec2) {
-      this._dimension = dim;
    }
 
    public getRectangle(): Rectangle {

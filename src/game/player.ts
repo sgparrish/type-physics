@@ -10,9 +10,9 @@ export default class Player extends PhysicsEntity {
 
    public constructor() {
       super("Player");
-      this.position = new Vec2(494.50360121928213, 499.99999999999994);
-      this.velocity = new Vec2(391.9807566419398, 79.69370378149293);
-      this.dimension = new Vec2(100, 100);
+      this.position = new Vec2(128, 128);
+      this.velocity = new Vec2(0, 0);
+      this.dimension = new Vec2(48, 48);
       this.listener = this;
    }
 
@@ -38,21 +38,21 @@ export default class Player extends PhysicsEntity {
    }
    public update(delta: number) {
       if (CommandMap.getCommand(Command.LEFT) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(-100, 0));
+         this.velocity = this.velocity.add(new Vec2(-64, 0));
       }
       if (CommandMap.getCommand(Command.RIGHT) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(100, 0));
+         this.velocity = this.velocity.add(new Vec2(64, 0));
       }
       if (CommandMap.getCommand(Command.UP) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(0, -100));
+         this.velocity = this.velocity.add(new Vec2(0, -64));
       }
       if (CommandMap.getCommand(Command.DOWN) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(0, 100));
+         this.velocity = this.velocity.add(new Vec2(0, 64));
       }
       if (CommandMap.getCommand(Command.DEBUG) !== 0) {
          this.velocity = new Vec2(0, 0);
       }
-      this.velocity = this.velocity.clamp(400);
+      this.velocity = this.velocity.clamp(196);
       // console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
    }
 

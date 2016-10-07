@@ -7,7 +7,7 @@ export default class Wall extends PhysicsEntity {
    public constructor(x: number, y: number, vertical: boolean = null) {
       super("Wall");
       this.position = new Vec2(x, y);
-      this.dimension = new Vec2(100, 100);
+      this.dimension = new Vec2(64, 64);
       this.moveable = false;
       if (vertical) {
          this.collideDirections.left = false;

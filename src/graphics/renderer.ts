@@ -16,8 +16,8 @@ export default class Renderer {
       this._resize();
       window.addEventListener('resize', this._resize);
 
-      //this.context.translate(400, 400);
-      //this.context.scale(0.5, 0.5);
+      this.context.translate(0, 0);
+      this.context.scale(2, 2);
    }
 
    public static resize(): void {
@@ -50,13 +50,20 @@ export default class Renderer {
 
    public static drawWorld(world: World): void {
       this.clear();
-      for (let collidable of world.bodies) {
-         this.drawRectangle(collidable.getRectangle());
+      for (let body of world.bodies) {
+         this.drawRectangle(body.getRectangle());
+      }
+
+      for (let tilemap of world.tilemaps) {
+         let rectangles = tilemap.getRectangles();
+         for (let rectangle of rectangles) {
+            this.drawRectangle(rectangle, '#ff0000');
+         }
       }
    }
 
    public static drawText(text: string, color: string = "#000000"): void {
-      this.context.strokeStyle = color;
+      this.context.fillStyle = color;
       this.context.font = "12px Monospace";
       this.context.fillText(text, 0, 12);
    }

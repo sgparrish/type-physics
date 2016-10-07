@@ -1,16 +1,30 @@
 import Vec2 from "./vec2";
 import Rectangle from "./rectangle";
 import Body from "./body";
-import Utils from "../utils";
+import Tilemap from "./tilemap";
 
 const MAX_DELTA_ADJUST = 2;
 
 export default class World {
 
    public bodies: Body[];
+   public tilemaps: Tilemap[];
 
    public constructor() {
       this.bodies = [];
+      this.tilemaps = [];
+      let t = new Tilemap(
+         new Vec2(64, 64),
+         new Vec2(8, 8),
+         new Vec2(64, 64)
+      );
+      t.collisionMap[0] = true;
+      t.collisionMap[1] = true;
+      t.collisionMap[2] = true;
+      t.collisionMap[3] = true;
+      t.collisionMap[8] = true;
+      t.collisionMap[16] = true;
+      this.tilemaps.push(t);
    }
 
    public add(collidable: Body) {
@@ -18,15 +32,22 @@ export default class World {
    }
 
    public step(delta: number): void {
-      let d = delta / 1000;
+      delta /= 1000;
 
       // Move everything
-      this.simulate(d);
+      this.simulate(delta);
 
       // Collide everything against each other
       for (let i = 0; i < this.bodies.length; i++) {
          for (let j = i + 1; j < this.bodies.length; j++) {
-            this.collide(d, this.bodies[i], this.bodies[j]);
+            this.collideBodies(delta, this.bodies[i], this.bodies[j]);
+         }
+      }
+
+      // Collide all bodies against all tilemaps
+      for (let body of this.bodies) {
+         for (let tilemap of this.tilemaps) {
+            this.collideTilemap(delta, body, tilemap);
          }
       }
    }
@@ -37,22 +58,34 @@ export default class World {
       }
    }
 
-   private collide(delta: number, bodyA: Body, bodyB: Body): void {
-      let rectA = bodyA.getRectangle();
-      let rectB = bodyB.getRectangle();
-      // Are A and B overlapping?
-      if (rectA.overlaps(rectB)) {
-         this.separateY(delta, bodyA, bodyB);
-
-         rectA = bodyA.getRectangle();
-         rectB = bodyB.getRectangle();
-         if (rectA.overlaps(rectB)) {
-            this.separateX(delta, bodyA, bodyB);
+   private collideTilemap(delta: number, body: Body, tilemap: Tilemap): void {
+      let rect = body.getRectangle();
+      // Is the body within the tilemap bounds?
+      if (rect.overlaps(tilemap.bounds)) {
+         // Possible collision
+         let tileBodies = tilemap.getBodiesInWorldRect(rect);
+         for (let tileBody of tileBodies) {
+            this.collideBodies(delta, body, tileBody);
          }
       }
    }
 
-   private separateX(delta: number, bodyA: Body, bodyB: Body): void {
+   private collideBodies(delta: number, bodyA: Body, bodyB: Body): void {
+      let rectA = bodyA.getRectangle();
+      let rectB = bodyB.getRectangle();
+      // Are A and B overlapping?
+      if (rectA.overlaps(rectB)) {
+         this.separateBodiesY(delta, bodyA, bodyB);
+
+         rectA = bodyA.getRectangle();
+         rectB = bodyB.getRectangle();
+         if (rectA.overlaps(rectB)) {
+            this.separateBodiesX(delta, bodyA, bodyB);
+         }
+      }
+   }
+
+   private separateBodiesX(delta: number, bodyA: Body, bodyB: Body): void {
       let rectA = bodyA.getRectangle();
       let rectB = bodyB.getRectangle();
       let overlap: number;
@@ -90,7 +123,7 @@ export default class World {
          bodyB.velocity = new Vec2(bodyA.velocity.x, bodyB.velocity.y);
       }
    }
-   private separateY(delta: number, bodyA: Body, bodyB: Body): void {
+   private separateBodiesY(delta: number, bodyA: Body, bodyB: Body): void {
       let rectA = bodyA.getRectangle();
       let rectB = bodyB.getRectangle();
       let overlap: number;

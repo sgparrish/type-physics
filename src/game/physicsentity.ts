@@ -17,6 +17,6 @@ abstract class PhysicsEntity extends Body implements Entity, CollisionListener {
    }
    public abstract render(interpPercent: number): void;
    public abstract update(delta: number): void;
-   public abstract collision(normal: Vec2, other: Body);
+   public abstract collision(normal: Vec2, other: Body): void;
 }
 export default PhysicsEntity;
