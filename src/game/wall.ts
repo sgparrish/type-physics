@@ -5,7 +5,7 @@ import PhysicsEntity from "./physicsentity";
 export default class Wall extends PhysicsEntity {
 
    public constructor(x: number, y: number, vertical: boolean = null) {
-      super("Wall");
+      super();
       this.position = new Vec2(x, y);
       this.dimension = new Vec2(64, 64);
       this.moveable = false;
@@ -21,8 +21,6 @@ export default class Wall extends PhysicsEntity {
    public render(interpPercent: number): void {
    }
    public update(delta: number): void {
-   }
-   public collision(normal: Vec2, other: Body): void {
    }
 
 }

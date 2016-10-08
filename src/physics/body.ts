@@ -1,42 +1,48 @@
 import Vec2 from "./vec2";
-import Direction from "./direction";
+import DirectionSet from "./directionset";
 import Rectangle from "./rectangle";
-import CollisionListener from "./collisionlistener";
+import Collidable from "./collidable";
 
-export default class Body {
-
-   public position: Vec2;
-   public velocity: Vec2;
-   public dimension: Vec2;
+export default class Body extends Collidable {
 
    public moveable: boolean;
 
-   public collideDirections: Direction;
+   public velocity: Vec2;
 
-   public listener: CollisionListener;
+   public collideDirections: DirectionSet;
 
    public constructor(pos: Vec2, vel: Vec2, dim: Vec2) {
+      super();
+
       this.moveable = true;
-
-      this.collideDirections = new Direction(true);
-
-      this.position = pos;
+      this.bounds = new Rectangle(pos.x, pos.y, dim.x, dim.y);
       this.velocity = vel;
-      this.dimension = dim;
+      this.collideDirections = new DirectionSet(true);
    }
 
-   public getRectangle(): Rectangle {
-      return new Rectangle(this.position.x, this.position.y,
-         this.dimension.x, this.dimension.y);
+   public get position(): Vec2 {
+      return this.bounds.position;
+   }
+   public set position(pos: Vec2) {
+      this.bounds = new Rectangle(
+         pos.x,
+         pos.y,
+         this.bounds.width,
+         this.bounds.height);
+   }
+
+   public get dimension(): Vec2 {
+      return this.bounds.dimension;
+   }
+   public set dimension(dim: Vec2) {
+      this.bounds = new Rectangle(
+         this.bounds.x,
+         this.bounds.y,
+         dim.x,
+         dim.y);
    }
 
    public simulate(delta: number): void {
       this.position = this.position.add(this.velocity.times(delta));
-   }
-
-   public collide(normal: Vec2, other: Body): void {
-      if (this.listener) {
-         this.listener.collision(normal, other);
-      }
    }
 }

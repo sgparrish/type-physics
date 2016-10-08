@@ -91,7 +91,7 @@ export default class QuadTree {
       let index = -1;
       if (this.children.length != 0) {
          for (let i = 0; i < 4; i++) {
-            if (this.children[i].rectangle.contains(body.getRectangle())) {
+            if (this.children[i].rectangle.contains(body.bounds)) {
                index = i;
             }
          }

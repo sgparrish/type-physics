@@ -1,5 +1,7 @@
 import Rectangle from "../physics/rectangle";
 import World from "../physics/world";
+import Body from "../physics/body";
+import Tilemap from "../physics/tilemap";
 
 export default class Renderer {
 
@@ -50,14 +52,15 @@ export default class Renderer {
 
    public static drawWorld(world: World): void {
       this.clear();
-      for (let body of world.bodies) {
-         this.drawRectangle(body.getRectangle());
-      }
-
-      for (let tilemap of world.tilemaps) {
-         let rectangles = tilemap.getRectangles();
-         for (let rectangle of rectangles) {
-            this.drawRectangle(rectangle, '#ff0000');
+      for (let collidable of world.collidables) {
+         if (collidable instanceof Body) {
+            this.drawRectangle(collidable.bounds);
+         } else if (collidable instanceof Tilemap) {
+            let rectangles = collidable.getRectangles();
+            for (let rectangle of rectangles) {
+               this.drawRectangle(rectangle, '#0000ff');
+            }
+            this.drawRectangle(collidable.bounds, "#ff0000");
          }
       }
    }

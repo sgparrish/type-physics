@@ -1,37 +1,35 @@
 import Entity from "./entity";
-import BaseEntity from "./baseentity";
 import PhysicsEntity from "./physicsentity";
 import World from "../physics/world";
 import Renderer from "../graphics/renderer";
 
-export default class Stage extends BaseEntity {
+export default class Stage implements Entity {
 
-   private _children: Entity[];
-   private _world: World;
+   private children: Entity[];
+   private world: World;
    
    public constructor() {
-      super("Stage");
 
-      this._children = [];
-      this._world = new World();
+      this.children = [];
+      this.world = new World();
    }
 
    public add(child: Entity, isPhysicsEntity: boolean = false) {
       if(isPhysicsEntity) {
-         this._world.add(child as PhysicsEntity);
+         this.world.add(child as PhysicsEntity|PhysicsEntity);
       }
-      this._children.push(child);
+      this.children.push(child);
    }
 
    public render(interpPercent: number) {
-      Renderer.drawWorld(this._world);
-      for (let child of this._children) {
+      Renderer.drawWorld(this.world);
+      for (let child of this.children) {
          child.render(interpPercent);
       }
    }
    public update(delta: number) {
-      this._world.step(delta);
-      for (let child of this._children) {
+      this.world.step(delta);
+      for (let child of this.children) {
          child.update(delta);
       }
    }

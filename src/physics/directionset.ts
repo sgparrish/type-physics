@@ -1,4 +1,4 @@
-export default class Direction {
+export default class DirectionSet {
    public left: boolean;
    public right: boolean;
    public top: boolean;

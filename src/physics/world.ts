@@ -1,34 +1,35 @@
 import Vec2 from "./vec2";
 import Rectangle from "./rectangle";
+import DirectionSet from "./directionset";
+import Collidable from "./collidable";
 import Body from "./body";
 import Tilemap from "./tilemap";
 
-const MAX_DELTA_ADJUST = 2;
+const MAX_DELTA_ADJUST = 3;
 
 export default class World {
 
-   public bodies: Body[];
-   public tilemaps: Tilemap[];
+   public collidables: Collidable[];
 
    public constructor() {
-      this.bodies = [];
-      this.tilemaps = [];
+      this.collidables = [];
       let t = new Tilemap(
          new Vec2(64, 64),
          new Vec2(8, 8),
          new Vec2(64, 64)
       );
-      t.collisionMap[0] = true;
-      t.collisionMap[1] = true;
-      t.collisionMap[2] = true;
-      t.collisionMap[3] = true;
-      t.collisionMap[8] = true;
-      t.collisionMap[16] = true;
-      this.tilemaps.push(t);
+      t.setTileAtLocalCoords(new Vec2(0, 0), true);
+      t.setTileAtLocalCoords(new Vec2(1, 0), true);
+      t.setTileAtLocalCoords(new Vec2(2, 0), true);
+      t.setTileAtLocalCoords(new Vec2(3, 0), true);
+      t.setTileAtLocalCoords(new Vec2(0, 1), true);
+      t.setTileAtLocalCoords(new Vec2(2, 2), true);
+      t.setTileAtLocalCoords(new Vec2(0, 2), true);
+      this.collidables.push(t);
    }
 
-   public add(collidable: Body) {
-      this.bodies.push(collidable);
+   public add(collidable: Collidable) {
+      this.collidables.push(collidable);
    }
 
    public step(delta: number): void {
@@ -37,71 +38,75 @@ export default class World {
       // Move everything
       this.simulate(delta);
 
-      // Collide everything against each other
-      for (let i = 0; i < this.bodies.length; i++) {
-         for (let j = i + 1; j < this.bodies.length; j++) {
-            this.collideBodies(delta, this.bodies[i], this.bodies[j]);
-         }
-      }
-
-      // Collide all bodies against all tilemaps
-      for (let body of this.bodies) {
-         for (let tilemap of this.tilemaps) {
-            this.collideTilemap(delta, body, tilemap);
+      // Collide bodies against each other
+      for (let a = 0; a < this.collidables.length; a++) {
+         for (let b = a + 1; b < this.collidables.length; b++) {
+            let collidableA = this.collidables[a];
+            let collidableB = this.collidables[b];
+            if (collidableA.enabled && collidableB.enabled) {
+               this.collide(delta, collidableA, collidableB);
+            }
          }
       }
    }
 
    private simulate(delta: number): void {
-      for (let body of this.bodies) {
-         body.simulate(delta);
+      for (let collidable of this.collidables) {
+         if (collidable instanceof Body) {
+            collidable.simulate(delta);
+         }
+      }
+   }
+
+   private collide(delta: number, collidableA: Collidable, collidableB: Collidable): void {
+      if (collidableA instanceof Body && collidableB instanceof Body) {
+         this.collideBodies(delta, collidableA, collidableB);
+      } else if (collidableA instanceof Body && collidableB instanceof Tilemap) {
+         this.collideTilemap(delta, collidableA, collidableB);
+      } else if (collidableA instanceof Tilemap && collidableB instanceof Body) {
+         this.collideTilemap(delta, collidableB, collidableA);
+      }
+   }
+
+   private collideBodies(delta: number, bodyA: Body, bodyB: Body): void {
+      // Are A and B overlapping?
+      if (bodyA.bounds.overlaps(bodyB.bounds)) {
+         // Solve collision in Y dimension
+         this.separateBodiesY(delta, bodyA, bodyB);
+         // Not solved? solve in X dimension
+         if (bodyA.bounds.overlaps(bodyB.bounds)) {
+            this.separateBodiesX(delta, bodyA, bodyB);
+         }
       }
    }
 
    private collideTilemap(delta: number, body: Body, tilemap: Tilemap): void {
-      let rect = body.getRectangle();
       // Is the body within the tilemap bounds?
-      if (rect.overlaps(tilemap.bounds)) {
+      if (body.bounds.overlaps(tilemap.bounds)) {
          // Possible collision
-         let tileBodies = tilemap.getBodiesInWorldRect(rect);
+         let tileBodies = tilemap.getBodiesInWorldRect(body.bounds);
          for (let tileBody of tileBodies) {
             this.collideBodies(delta, body, tileBody);
          }
       }
    }
 
-   private collideBodies(delta: number, bodyA: Body, bodyB: Body): void {
-      let rectA = bodyA.getRectangle();
-      let rectB = bodyB.getRectangle();
-      // Are A and B overlapping?
-      if (rectA.overlaps(rectB)) {
-         this.separateBodiesY(delta, bodyA, bodyB);
-
-         rectA = bodyA.getRectangle();
-         rectB = bodyB.getRectangle();
-         if (rectA.overlaps(rectB)) {
-            this.separateBodiesX(delta, bodyA, bodyB);
-         }
-      }
-   }
-
-   private separateBodiesX(delta: number, bodyA: Body, bodyB: Body): void {
-      let rectA = bodyA.getRectangle();
-      let rectB = bodyB.getRectangle();
+   private separateBodiesX(delta: number, bodyA: Body, bodyB: Body): [number, number] {
       let overlap: number;
       let maxOverlap = Math.abs(bodyA.velocity.x * delta) + Math.abs(bodyB.velocity.x * delta) + MAX_DELTA_ADJUST;
+      let overlapMove: [number, number];
 
       if (bodyA.velocity.x > bodyB.velocity.x && bodyA.collideDirections.right && bodyB.collideDirections.left) {
          // Collide bodyA's right side with bodyB's left
-         overlap = rectA.right - rectB.left;
+         overlap = bodyA.bounds.right - bodyB.bounds.left;
       } else if (bodyA.velocity.x < bodyB.velocity.x && bodyA.collideDirections.left && bodyB.collideDirections.right) {
          // Collide bodyA's left side with bodyB's right
-         overlap = rectA.left - rectB.right;
+         overlap = bodyA.bounds.left - bodyB.bounds.right;
       } else {
-         return;
+         return [0, 0];
       }
-      if (Math.abs(overlap) > maxOverlap + 1) {
-         return;
+      if (Math.abs(overlap) > maxOverlap) {
+         return [0, 0];
       }
 
       if (bodyA.moveable && bodyB.moveable) {
@@ -113,33 +118,36 @@ export default class World {
 
          bodyA.velocity = new Vec2(avgVel, bodyA.velocity.y);
          bodyB.velocity = new Vec2(avgVel, bodyB.velocity.y);
+         overlapMove = [-overlap * 0.5, overlap * 0.5];
       } else if (bodyA.moveable) {
          // Just body A is movable
          bodyA.position = bodyA.position.sub(new Vec2(overlap, 0));
          bodyA.velocity = new Vec2(bodyB.velocity.x, bodyA.velocity.y);
+         overlapMove = [-overlap, 0];
       } else if (bodyB.moveable) {
          // Just body B is movable
          bodyB.position = bodyB.position.add(new Vec2(overlap, 0));
          bodyB.velocity = new Vec2(bodyA.velocity.x, bodyB.velocity.y);
+         overlapMove = [0, overlap];
       }
+      return overlapMove;
    }
-   private separateBodiesY(delta: number, bodyA: Body, bodyB: Body): void {
-      let rectA = bodyA.getRectangle();
-      let rectB = bodyB.getRectangle();
+   private separateBodiesY(delta: number, bodyA: Body, bodyB: Body): [number, number] {
       let overlap: number;
       let maxOverlap = Math.abs(bodyA.velocity.y * delta) + Math.abs(bodyB.velocity.y * delta) + MAX_DELTA_ADJUST;
+      let overlapMove: [number, number];
 
       if (bodyA.velocity.y < bodyB.velocity.y && bodyA.collideDirections.top && bodyB.collideDirections.bottom) {
          // Collide bodyA's top side with bodyB's bottom
-         overlap = rectA.top - rectB.bottom
+         overlap = bodyA.bounds.top - bodyB.bounds.bottom
       } else if (bodyA.velocity.y > bodyB.velocity.y && bodyA.collideDirections.bottom && bodyB.collideDirections.top) {
          // Collide bodyA's bottom side with bodyB's top
-         overlap = rectA.bottom - rectB.top;
+         overlap = bodyA.bounds.bottom - bodyB.bounds.top;
       } else {
-         return;
+         return [0, 0];
       }
-      if (Math.abs(overlap) > maxOverlap + 1) {
-         return;
+      if (Math.abs(overlap) > maxOverlap) {
+         return [0, 0];
       }
 
       if (bodyA.moveable && bodyB.moveable) {
@@ -151,15 +159,18 @@ export default class World {
 
          bodyA.velocity = new Vec2(bodyA.velocity.y, avgVel);
          bodyB.velocity = new Vec2(bodyB.velocity.y, avgVel);
+         overlapMove = [-overlap * 0.5, overlap * 0.5];
       } else if (bodyA.moveable) {
          // Just body A is movable
          bodyA.position = bodyA.position.sub(new Vec2(0, overlap));
          bodyA.velocity = new Vec2(bodyA.velocity.x, bodyB.velocity.y);
+         overlapMove = [-overlap, 0];
       } else if (bodyB.moveable) {
          // Just body B is movable
          bodyB.position = bodyB.position.add(new Vec2(0, overlap));
          bodyB.velocity = new Vec2(bodyB.velocity.x, bodyA.velocity.y);
+         overlapMove = [0, overlap];
       }
+      return overlapMove;
    }
-
 }
