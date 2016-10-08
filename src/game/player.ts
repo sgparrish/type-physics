@@ -11,7 +11,7 @@ export default class Player extends PhysicsEntity {
       this.velocity = new Vec2(0, 0);
       this.dimension = new Vec2(48, 48);
    }
-   public render(interpPercent: number) {
+   public preRender(interpPercent: number) {
 
    }
    public update(delta: number) {

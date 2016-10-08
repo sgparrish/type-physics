@@ -3,7 +3,7 @@ import World from "../physics/world";
 import Body from "../physics/body";
 import Tilemap from "../physics/tilemap";
 
-export default class Renderer {
+export default class DebugRenderer {
 
    public static canvas: HTMLCanvasElement;
    public static context: CanvasRenderingContext2D;
@@ -71,4 +71,4 @@ export default class Renderer {
       this.context.fillText(text, 0, 12);
    }
 }
-Renderer.initialize();
+DebugRenderer.initialize();

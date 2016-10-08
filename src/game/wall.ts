@@ -18,9 +18,9 @@ export default class Wall extends PhysicsEntity {
       }
    }
 
-   public render(interpPercent: number): void {
-   }
    public update(delta: number): void {
+   }
+   public preRender(interpPercent: number): void {
    }
 
 }

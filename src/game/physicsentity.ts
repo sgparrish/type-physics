@@ -3,6 +3,7 @@ import Vec2 from "../physics/vec2";
 import Body from "../physics/body";
 import Collision from "../physics/collision";
 import CollisionListener from "../physics/collisionlistener";
+import RenderObject from "../graphics/renderobject";
 
 abstract class PhysicsEntity extends Body implements Entity, CollisionListener {
 
@@ -11,8 +12,11 @@ abstract class PhysicsEntity extends Body implements Entity, CollisionListener {
       this.listener = this;
    }
 
-   public abstract render(interpPercent: number): void;
    public abstract update(delta: number): void;
+   public abstract preRender(interpPercent: number): void;
+   public getRenderObjects(): RenderObject[] {
+      return null;
+   }
    public onCollision(collision: Collision): void {
    }
 }
