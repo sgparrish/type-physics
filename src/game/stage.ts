@@ -27,16 +27,14 @@ export default class Stage implements Entity {
          child.update(delta);
       }
    }
-   public preRender(interpPercent: number) {
+   public render(interpPercent: number): RenderObject[] {
       for (let child of this.children) {
-         child.preRender(interpPercent);
+         child.render(interpPercent);
       }
       for (let child of this.children) {
 
       }
       DebugRenderer.drawWorld(this.world);
-   }
-   public getRenderObjects(): RenderObject[] {
       return null;
    }
 }

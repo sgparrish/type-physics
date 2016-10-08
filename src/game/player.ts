@@ -2,6 +2,7 @@ import Vec2 from "../physics/vec2";
 import PhysicsEntity from "./physicsentity";
 import Command from "../input/command";
 import CommandMap from "../input/commandmap";
+import RenderObject from "../graphics/renderobject";
 
 export default class Player extends PhysicsEntity {
 
@@ -10,9 +11,6 @@ export default class Player extends PhysicsEntity {
       this.position = new Vec2(128, 128);
       this.velocity = new Vec2(0, 0);
       this.dimension = new Vec2(48, 48);
-   }
-   public preRender(interpPercent: number) {
-
    }
    public update(delta: number) {
       if (CommandMap.getCommand(Command.LEFT) !== 0) {
@@ -32,5 +30,8 @@ export default class Player extends PhysicsEntity {
       }
       this.velocity = this.velocity.clamp(196);
       // console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
+   }
+   public render(interpPercent: number): RenderObject[] {
+      return null;
    }
 }

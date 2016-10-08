@@ -1,6 +1,7 @@
 import Vec2 from "../physics/vec2";
 import Body from "../physics/body";
 import PhysicsEntity from "./physicsentity";
+import RenderObject from "../graphics/renderobject";
 
 export default class Wall extends PhysicsEntity {
 
@@ -20,7 +21,8 @@ export default class Wall extends PhysicsEntity {
 
    public update(delta: number): void {
    }
-   public preRender(interpPercent: number): void {
+   public render(interpPercent: number): RenderObject[] {
+      return null;
    }
 
 }

@@ -13,10 +13,7 @@ abstract class PhysicsEntity extends Body implements Entity, CollisionListener {
    }
 
    public abstract update(delta: number): void;
-   public abstract preRender(interpPercent: number): void;
-   public getRenderObjects(): RenderObject[] {
-      return null;
-   }
+   public abstract render(interpPercent: number): RenderObject[];
    public onCollision(collision: Collision): void {
    }
 }

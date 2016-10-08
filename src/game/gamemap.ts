@@ -7,9 +7,7 @@ export default class GameMap extends Tilemap implements Entity {
 
    public update(delta: number): void {
    }
-   public preRender(interpPercent: number): void {
-   }
-   public getRenderObjects(): RenderObject[] {
+   public render(interpPercent: number): RenderObject[] {
       return null;
    }
 

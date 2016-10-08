@@ -15,7 +15,7 @@ export default class PhysicsScreen extends GameScreen {
       this.stage.update(delta);
    }
    protected render(interpPercent: number): void {
-      this.stage.preRender(interpPercent);
+      this.stage.render(interpPercent);
       DebugRenderer.drawText("fps: " + Math.round(this.fps));
    }
    protected panic(delta: number): void {
