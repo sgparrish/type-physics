@@ -185,6 +185,12 @@ declare module PIXI {
         accessibleTitle: string;
         tabIndex: number;
 
+        // ADDED BY ME ======
+        translate(x: number, y:number): void;
+        zoom(x: number, y:number, factor: number, maxScale: number): void;
+        applyTransform(x: number, y:number): Point;
+        // ==================
+
         on(event: 'click', fn: (event: interaction.InteractionEvent) => void, context?: any): utils.EventEmitter;
         on(event: 'mousedown', fn: (event: interaction.InteractionEvent) => void, context?: any): utils.EventEmitter;
         on(event: 'mouseout', fn: (event: interaction.InteractionEvent) => void, context?: any): utils.EventEmitter;

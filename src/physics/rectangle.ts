@@ -10,10 +10,10 @@ export default class Rectangle {
       this._dimension = new Vec2(width, height);
    }
 
-   public get position(): Vec2 {
+   public get position(): (Vec2) {
       return this._position;
    }
-   public get dimension(): Vec2 {
+   public get dimension(): (Vec2) {
       return this._dimension;
    }
 

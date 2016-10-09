@@ -1,8 +1,9 @@
-import PhysicsScreen from "./physicsScreen";
+import ScreenManager from "./engine/screenmanager";
+import LoadScreen from "./loadscreen";
+import Context from "./graphics/context";
 
-export default function main() {
-   console.debug("main");
-   let game: PhysicsScreen = new PhysicsScreen();
-   game.start(60);
+function main() {
+   Context.initialize();
+   let game: ScreenManager = new ScreenManager(new LoadScreen());
 }
 main();

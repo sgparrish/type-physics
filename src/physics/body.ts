@@ -20,7 +20,7 @@ export default class Body extends Collidable {
       this.collideDirections = new DirectionSet(true);
    }
 
-   public get position(): Vec2 {
+   public get position(): (Vec2) {
       return this.bounds.position;
    }
    public set position(pos: Vec2) {
@@ -31,7 +31,7 @@ export default class Body extends Collidable {
          this.bounds.height);
    }
 
-   public get dimension(): Vec2 {
+   public get dimension(): (Vec2) {
       return this.bounds.dimension;
    }
    public set dimension(dim: Vec2) {

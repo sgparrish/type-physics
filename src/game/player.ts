@@ -1,37 +1,60 @@
+import Entity from "../engine/entity";
 import Vec2 from "../physics/vec2";
-import PhysicsEntity from "./physicsentity";
+import Body from "../physics/body";
+import RenderObject from "../graphics/renderobject";
+import RenderLayer from "../graphics/renderlayer";
 import Command from "../input/command";
 import CommandMap from "../input/commandmap";
-import RenderObject from "../graphics/renderobject";
 
-export default class Player extends PhysicsEntity {
+const ACCELERATION = 200;
+const FRICTION = 160;
+const MAX_SPEED = 400;
+
+export default class Player implements Entity {
+
+   private body: Body;
+   private sprite: PIXI.Sprite;
 
    public constructor() {
-      super();
-      this.position = new Vec2(128, 128);
-      this.velocity = new Vec2(0, 0);
-      this.dimension = new Vec2(48, 48);
+      this.sprite = new PIXI.Sprite((PIXI.loader.resources as any).chef.texture);
+      this.sprite.scale.set(4, 4);
+
+      this.body = new Body(
+         new Vec2(0, this.sprite.texture.height * 2.5),
+         new Vec2(0, 0),
+         new Vec2(this.sprite.texture.width * 4, this.sprite.texture.height * 1.5)
+      );
    }
-   public update(delta: number) {
+
+   getCollidable(): Body {
+      return this.body;
+   }
+   update(delta: number): void {
+
+      let direction = new Vec2(0, 0);
       if (CommandMap.getCommand(Command.LEFT) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(-64, 0));
+         direction = direction.add(new Vec2(-1, 0));
       }
       if (CommandMap.getCommand(Command.RIGHT) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(64, 0));
+         direction = direction.add(new Vec2(1, 0));
       }
       if (CommandMap.getCommand(Command.UP) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(0, -64));
+         direction = direction.add(new Vec2(0, -1));
       }
       if (CommandMap.getCommand(Command.DOWN) !== 0) {
-         this.velocity = this.velocity.add(new Vec2(0, 64));
+         direction = direction.add(new Vec2(0, 1));
       }
-      if (CommandMap.getCommand(Command.DEBUG) !== 0) {
-         this.velocity = new Vec2(0, 0);
+      if (direction.length() === 0) {
+         direction = direction.normalize();
+         this.body.velocity = this.body.velocity.reduce(new Vec2(FRICTION, FRICTION));
+      } else {
+         this.body.velocity = this.body.velocity.add(direction.times(ACCELERATION));
       }
-      this.velocity = this.velocity.clamp(196);
-      // console.log(this.position.x + ", " + this.position.y + "; " + this.velocity.x + ", " + this.velocity.y);
+
+      this.body.velocity = this.body.velocity.clamp(MAX_SPEED);
    }
-   public render(interpPercent: number): RenderObject[] {
-      return null;
+   render(interpPercent: number): RenderObject[] {
+      this.sprite.position.set(this.body.position.x, this.body.position.y - this.sprite.texture.height * 2.5);
+      return [new RenderObject(this.sprite, this.body.bounds.bottom, RenderLayer.ROOM)];
    }
 }

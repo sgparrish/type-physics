@@ -1,85 +1,31 @@
-abstract class GameScreen {
+import Screen from "./engine/screen";
+import Stage from "./engine/stage";
+import Player from "./game/player";
 
-   private _fps: number;
-   private framesThisSecond: number;
-   private nextFpsUpdate: number;
+export default class GameScreen extends Screen {
 
-   private simulationTimestep: number;
-   private panicUpdates: number;
+   private gameStage: Stage;
+   private uiRoot: PIXI.Container;
 
-   private rafHandle: number;
+   public setup(): void {
+      // Setup scene graph
+      this.gameStage = new Stage(true);
+      this.uiRoot = new PIXI.Container();
 
-   private lastFrameTimestamp: number;
-   private frameDelta: number;
+      this.root.addChild(this.gameStage.getDisplayRoot());
+      this.root.addChild(this.uiRoot);
 
-   private exitRequested: boolean;
-
-   private _run: (timestamp: number) => void;
-
-   public start(simulationFPS: number) {
-      this.simulationTimestep = 1000 / simulationFPS;
-      this.panicUpdates = simulationFPS * 2;
-
-      this._fps = 60;
-      this.framesThisSecond = 0;
-      this.nextFpsUpdate = performance.now() + 1000;
-
-      this.frameDelta = 0;
-      this.lastFrameTimestamp = performance.now();
-
-      this.exitRequested = false;
-
-      this.setup();
-
-      this._run = (timestamp: number) => { this.run(timestamp) }
-
-      this.rafHandle = requestAnimationFrame(this._run);
+      this.gameStage.add(new Player());
    }
-
-   public stop() {
-      this.exitRequested = true;
+   public update(delta: number): void {
+      this.gameStage.update(delta);
    }
-
-   public run(timestamp: number) {
-      if (this.exitRequested) {
-         this.end();
-         return;
-      }
-      this.rafHandle = requestAnimationFrame(this._run);
-
-      if (timestamp > this.nextFpsUpdate) {
-         this._fps = 0.25 * this.framesThisSecond + 0.75 * this._fps;
-         this.framesThisSecond = 0;
-         this.nextFpsUpdate = performance.now() + 1000;
-      }
-      this.framesThisSecond += 1;
-
-      this.frameDelta += timestamp - this.lastFrameTimestamp;
-      this.lastFrameTimestamp = timestamp;
-
-      let numUpdates = 0;
-      while (this.frameDelta >= this.simulationTimestep) {
-         this.update(this.simulationTimestep);
-         this.frameDelta -= this.simulationTimestep;
-
-         numUpdates++;
-         if (numUpdates > this.panicUpdates) {
-            this.panic(this.frameDelta);
-            this.frameDelta = 0; // skip to now
-            break;
-         }
-      }
-      this.render(this.frameDelta / this.simulationTimestep);
+   public render(interpDelta: number): void {
+      this.gameStage.render(interpDelta);
    }
-
-   public get fps(): number {
-      return this._fps;
+   public panic(delta: number): void {
+      this.gameStage.update(delta);
    }
-
-   protected abstract setup(): void;
-   protected abstract update(delta: number): void;
-   protected abstract render(interpPercent: number): void;
-   protected abstract panic(delta: number): void;
-   protected abstract end(): void;
+   public end(): void {
+   }
 }
-export default GameScreen;

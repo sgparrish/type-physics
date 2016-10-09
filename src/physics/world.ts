@@ -13,19 +13,6 @@ export default class World {
 
    public constructor() {
       this.collidables = [];
-      let t = new Tilemap(
-         new Vec2(64, 64),
-         new Vec2(8, 8),
-         new Vec2(64, 64)
-      );
-      t.setTileAtLocalCoords(new Vec2(0, 0), true);
-      t.setTileAtLocalCoords(new Vec2(1, 0), true);
-      t.setTileAtLocalCoords(new Vec2(2, 0), true);
-      t.setTileAtLocalCoords(new Vec2(3, 0), true);
-      t.setTileAtLocalCoords(new Vec2(0, 1), true);
-      t.setTileAtLocalCoords(new Vec2(2, 2), true);
-      t.setTileAtLocalCoords(new Vec2(0, 2), true);
-      this.collidables.push(t);
    }
 
    public add(collidable: Collidable) {
