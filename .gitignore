@@ -1,4 +1,5 @@
 bin/
 .vscode/
 lib/
+!lib/pixi.mod.js
 node_modules/
