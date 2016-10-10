@@ -1,10 +1,18 @@
 { "height":8,
  "layers":[
         {
-         "data":[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+         "data":[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
          "height":8,
          "name":"floor",
          "opacity":1,
+         "properties":
+            {
+             "layer":"floor"
+            },
+         "propertytypes":
+            {
+             "layer":"string"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":8,
@@ -12,21 +20,18 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "data":[5, 5, 5, 5, 5, 5, 5, 5, 5, 2, 2, 2, 2, 2, 2, 5, 3, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 5, 5, 0, 0, 4, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":8,
-         "name":"cabinets",
+         "name":"room",
          "opacity":1,
-         "type":"tilelayer",
-         "visible":true,
-         "width":8,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":8,
-         "name":"counters",
-         "opacity":1,
+         "properties":
+            {
+             "layer":"room"
+            },
+         "propertytypes":
+            {
+             "layer":"string"
+            },
          "type":"tilelayer",
          "visible":true,
          "width":8,
@@ -49,18 +54,6 @@
                  "width":46,
                  "x":42,
                  "y":8.3333333333333
-                }, 
-                {
-                 "gid":3221225475,
-                 "height":27,
-                 "id":10,
-                 "name":"trick",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":33.6666666666667,
-                 "x":30.6666666666667,
-                 "y":114
                 }, 
                 {
                  "height":0,
@@ -138,18 +131,15 @@
                  "y":77.6666666666667
                 }],
          "opacity":1,
+         "properties":
+            {
+             "layer":"meta"
+            },
+         "propertytypes":
+            {
+             "layer":"string"
+            },
          "type":"objectgroup",
-         "visible":true,
-         "width":8,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "height":8,
-         "image":"",
-         "name":"imglayername",
-         "opacity":1,
-         "type":"imagelayer",
          "visible":true,
          "width":8,
          "x":0,
@@ -161,32 +151,29 @@
  "tileheight":16,
  "tilesets":[
         {
-         "columns":6,
+         "columns":5,
          "firstgid":1,
          "image":"tiles.png",
          "imageheight":16,
-         "imagewidth":96,
+         "imagewidth":80,
          "margin":0,
-         "name":"tiles.png",
+         "name":"tiles",
          "spacing":0,
-         "tilecount":6,
+         "tilecount":5,
          "tileheight":16,
          "tileproperties":
             {
-             "5":
+             "4":
                 {
-                 "test":"turtle"
+                 "collides":"true"
                 }
             },
          "tilepropertytypes":
             {
-             "5":
+             "4":
                 {
-                 "test":"string"
+                 "collides":"string"
                 }
-            },
-         "tiles":
-            {
             },
          "tilewidth":16
         }],

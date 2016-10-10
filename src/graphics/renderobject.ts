@@ -20,7 +20,7 @@ export default class RenderObject {
       if (objectA.layer != objectB.layer) {
          return objectB.layer - objectA.layer;
       } else {
-         return objectA.depth - objectB.depth;
+         return objectB.depth - objectA.depth;
       }
    }
 }

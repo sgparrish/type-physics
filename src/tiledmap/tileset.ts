@@ -58,7 +58,7 @@ export default class Tileset {
       if (tileset.tileproperties && tileset.tileproperties instanceof Object) {
          this.tileProperties = {};
          for (let property in tileset.tileproperties) {
-            this.tileProperties[property] = tileset.properties[property];
+            this.tileProperties[property] = tileset.tileproperties[property];
          }
       }
       if (tileset.properties && tileset.properties instanceof Object) {

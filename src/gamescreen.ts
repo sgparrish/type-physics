@@ -1,6 +1,7 @@
 import Screen from "./engine/screen";
 import Stage from "./engine/stage";
 import Player from "./game/player";
+import Kitchen from "./game/kitchen";
 
 export default class GameScreen extends Screen {
 
@@ -16,6 +17,7 @@ export default class GameScreen extends Screen {
       this.root.addChild(this.uiRoot);
 
       this.gameStage.add(new Player());
+      this.gameStage.add(new Kitchen());
    }
    public update(delta: number): void {
       this.gameStage.update(delta);

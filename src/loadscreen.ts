@@ -46,6 +46,8 @@ export default class LoadScreen extends Screen {
       PIXI.loader.on('complete', this._complete);
 
       PIXI.loader.add('chef', 'res/chef.png');
+      PIXI.loader.add('kitchen', 'res/kitchen-test.json');
+      PIXI.loader.add('tiles', 'res/tiles.png');
 
       PIXI.loader.load();
    }
@@ -90,6 +92,7 @@ export default class LoadScreen extends Screen {
       }
    }
    private error(loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) {
+      console.log("error");
    }
    private complete(loader: PIXI.loaders.Loader, resources: Object) {
       this.manager.setScreen(new GameScreen());
