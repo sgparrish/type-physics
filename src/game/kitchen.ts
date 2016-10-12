@@ -21,8 +21,6 @@ export default class Kitchen implements Entity {
 
    public constructor() {
       this.mapModel = new Map(PIXI.loader.resources['kitchen'].data);
-      this.mapModel.tileWidth *= 4;
-      this.mapModel.tileHeight *= 4;
 
       this.tileset = [];
       this.tileCollision = [];
@@ -102,7 +100,6 @@ export default class Kitchen implements Entity {
                   let spriteX = tileX * this.mapModel.tileWidth;
                   let sprite = new PIXI.Sprite(this.tileset[gid]);
                   sprite.position.set(spriteX, spriteY);
-                  sprite.scale.set(4, 4);
                   this.mapSprites[renderLayer][tileY][tileX] = sprite;
                   this.mapRows[renderLayer][tileY].addChild(sprite);
                   tileIndex++;

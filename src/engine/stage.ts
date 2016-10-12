@@ -24,6 +24,7 @@ export default class Stage {
       this.entities = [];
       this.physicsWorld = new World();
       this.displayRoot = new PIXI.Container();
+      this.displayRoot.scale.set(4, 4);
    }
 
    public add(entity: Entity) {

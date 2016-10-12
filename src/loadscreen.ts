@@ -45,7 +45,7 @@ export default class LoadScreen extends Screen {
       PIXI.loader.on('error', this._error);
       PIXI.loader.on('complete', this._complete);
 
-      PIXI.loader.add('chef', 'res/chef.png');
+      PIXI.loader.add('human', 'res/human.png');
       PIXI.loader.add('kitchen', 'res/kitchen-test.json');
       PIXI.loader.add('tiles', 'res/tiles.png');
 
@@ -78,7 +78,7 @@ export default class LoadScreen extends Screen {
 
       this.loadingText.x = half[0];
       this.loadingText.y = half[1];
-      this.loadingText.text = this.currentProgress.toString() + "%"
+      this.loadingText.text = Math.round(this.currentProgress).toString() + "%"
    }
    public panic(delta: number): void {
    }
