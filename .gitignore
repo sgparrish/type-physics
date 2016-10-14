@@ -3,3 +3,4 @@ bin/
 lib/*
 !lib/pixi.mod.js
 node_modules/
+res/reference

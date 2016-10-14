@@ -5,6 +5,7 @@ import RenderObject from "../graphics/renderobject";
 import RenderLayer from "../graphics/renderlayer";
 import Command from "../input/command";
 import CommandMap from "../input/commandmap";
+import CharacterModel from "./charactermodel";
 
 const ACCELERATION = 100;
 const FRICTION = 80;
@@ -13,16 +14,16 @@ const MAX_SPEED = 200;
 export default class Player implements Entity {
 
    private body: Body;
-   private sprite: PIXI.Sprite;
+   private sprite: PIXI.DisplayObject;
 
    public constructor() {
-      this.sprite = new PIXI.Sprite(PIXI.loader.resources['human'].texture);
-      this.sprite.tint = 0xbe6431;
+      let charModel = new CharacterModel();
+      this.sprite = charModel.root;
 
       this.body = new Body(
-         new Vec2(0, this.sprite.texture.height),
+         new Vec2(4, 32),
          new Vec2(0, 0),
-         new Vec2(this.sprite.texture.width, this.sprite.texture.height * 0.3)
+         new Vec2(16, 12)
       );
    }
 
@@ -54,7 +55,7 @@ export default class Player implements Entity {
       this.body.velocity = this.body.velocity.clamp(MAX_SPEED);
    }
    render(interpPercent: number): RenderObject[] {
-      this.sprite.position.set(this.body.position.x, this.body.position.y - this.sprite.texture.height * 0.5);
+      this.sprite.position.set(this.body.position.x - 4, this.body.position.y - 16);
       return [new RenderObject(this.sprite, this.body.bounds.top, RenderLayer.ROOM)];
    }
 }

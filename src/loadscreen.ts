@@ -45,9 +45,17 @@ export default class LoadScreen extends Screen {
       PIXI.loader.on('error', this._error);
       PIXI.loader.on('complete', this._complete);
 
+      // List resources to load
       PIXI.loader.add('human', 'res/human.png');
       PIXI.loader.add('kitchen', 'res/kitchen-test.json');
       PIXI.loader.add('tiles', 'res/tiles.png');
+
+      PIXI.loader.add('hair', 'res/human/front/front hair/front riker.png');
+      PIXI.loader.add('head', 'res/human/front/front head.png');
+      PIXI.loader.add('arms', 'res/human/front/front arms/front narrow arms.png');
+      PIXI.loader.add('body', 'res/human/front/front body/front narrow body stripe.png');
+      PIXI.loader.add('legs', 'res/human/front/front legs.png');
+
 
       PIXI.loader.load();
    }
