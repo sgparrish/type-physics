@@ -2,7 +2,15 @@
    "resources": [
       {
          "name": "human",
-         "file": "res/human.png"
+         "file": "res/humanMaster.json"
+      },
+      {
+         "name": "kitchen",
+         "file": "res/kitchen-test.json"
+      },
+      {
+         "name": "tiles",
+         "file": "res/tiles.png"
       }
    ]
 }

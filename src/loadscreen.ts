@@ -3,8 +3,12 @@ import Screen from "./engine/screen";
 import GameScreen from "./gamescreen";
 
 const LOAD_BAR_HEIGHT = 25;
+const RESOURCE_LIST_NAME = "resources";
+const RESOURCES_LOCATION = "res/resources.json";
 
 export default class LoadScreen extends Screen {
+
+   private preload: boolean;
 
    private loadingText: PIXI.Text;
    private loadingBar: PIXI.Graphics;
@@ -16,7 +20,9 @@ export default class LoadScreen extends Screen {
    private _complete: (loader: PIXI.loaders.Loader, resources: Object) => void;
 
    public setup(): void {
-      
+
+      this.preload = true;
+
       this.currentProgress = 0;
 
       // Build Scene graph
@@ -31,32 +37,10 @@ export default class LoadScreen extends Screen {
       this.root.addChild(this.loadingBar);
       this.root.addChild(this.loadingText);
 
-      this._progress = (loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) => {
-         this.progress(loader, resource)
-      }
-      this._error = (loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) => {
-         this.error(loader, resource);
-      }
-      this._complete = (loader: PIXI.loaders.Loader, resources: Object) => {
-         this.complete(loader, resources);
-      }
+      this.setupLoader();
 
-      PIXI.loader.on('progress', this._progress);
-      PIXI.loader.on('error', this._error);
-      PIXI.loader.on('complete', this._complete);
-
-      // List resources to load
-      PIXI.loader.add('human', 'res/human.png');
-      PIXI.loader.add('kitchen', 'res/kitchen-test.json');
-      PIXI.loader.add('tiles', 'res/tiles.png');
-
-      PIXI.loader.add('hair', 'res/human/front/front hair/front riker.png');
-      PIXI.loader.add('head', 'res/human/front/front head.png');
-      PIXI.loader.add('arms', 'res/human/front/front arms/front narrow arms.png');
-      PIXI.loader.add('body', 'res/human/front/front body/front narrow body stripe.png');
-      PIXI.loader.add('legs', 'res/human/front/front legs.png');
-
-
+      // Call preload
+      PIXI.loader.add(RESOURCE_LIST_NAME, RESOURCES_LOCATION);
       PIXI.loader.load();
    }
    public update(delta: number): void {
@@ -93,17 +77,48 @@ export default class LoadScreen extends Screen {
    public end(): void {
    }
 
-   private progress(loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) {
-      this.currentProgress = loader.progress;
-      if(resource.texture) {
-         resource.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+   private setupLoader(): void {
+      this._progress = (loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) => {
+         this.progress(loader, resource)
       }
-   }
-   private error(loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) {
-      console.log("error");
-   }
-   private complete(loader: PIXI.loaders.Loader, resources: Object) {
-      this.manager.setScreen(new GameScreen());
+      this._error = (loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource) => {
+         this.error(loader, resource);
+      }
+      this._complete = (loader: PIXI.loaders.Loader, resources: Object) => {
+         this.complete(loader, resources);
+      }
+      PIXI.loader.on('progress', this._progress);
+      PIXI.loader.on('error', this._error);
+      PIXI.loader.on('complete', this._complete);
    }
 
+   private progress(loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource): void {
+      if (!this.preload) {
+         this.currentProgress = loader.progress;
+         if (resource.texture) {
+            resource.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+         }
+      }
+   }
+   private error(loader: PIXI.loaders.Loader, resource: PIXI.loaders.Resource): void {
+      console.error("Error loading resource");
+   }
+   private complete(loader: PIXI.loaders.Loader, resources: Object): void {
+      if (this.preload) {
+         console.log("Preloading complete.");
+         this.preload = false;
+
+         // Set up resources found from resource file
+         let resources = PIXI.loader.resources[RESOURCE_LIST_NAME].data.resources;
+         for (let index = 0; index < resources.length; index++) {
+            let res = resources[index];
+            PIXI.loader.add(res.name, res.file);
+         }
+         // Load these new resources
+         PIXI.loader.load();
+      } else {
+         console.log("Loading Complete.");
+         this.manager.setScreen(new GameScreen());
+      }
+   }
 }

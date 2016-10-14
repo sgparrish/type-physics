@@ -1,6 +1,6 @@
 export default class Context {
 
-   private static renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
+   public static renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
    private static _resize: () => void;
 
    public static initialize() {

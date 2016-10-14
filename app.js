@@ -5,7 +5,7 @@ requirejs.config({
         test: '../test'
     },
     bundles: {
-        'bin/main': ['src/main', 'test/main']
+        'bin/main': ['main']
     }
 });
-requirejs(['src/main']);
+requirejs(['main']);
