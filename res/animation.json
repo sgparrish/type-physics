@@ -1,8 +1,170 @@
 {
-   "idle": {
-      "frameDurations": 83,
+   "idleDownLegs": {
+      "frameDurations": 120,
       "frameNames": [
-
+         "idleDownLegs0"
+      ]
+   },
+   "idleDownArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleDownArms0"
+      ]
+   },
+   "runDownLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runDownLegs0",
+         "runDownLegs1",
+         "runDownLegs2",
+         "runDownLegs1",
+         "runDownLegs0",
+         "runDownLegs3",
+         "runDownLegs4",
+         "runDownLegs5",
+         "runDownLegs4",
+         "runDownLegs3"
+      ]
+   },
+   "runDownArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runDownArms0",
+         "runDownArms1",
+         "runDownArms2",
+         "runDownArms1",
+         "runDownArms0",
+         "runDownArms3",
+         "runDownArms4",
+         "runDownArms5",
+         "runDownArms4",
+         "runDownArms3"
+      ]
+   },
+   "idleUpLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleUpLegs0"
+      ]
+   },
+   "idleUpArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleUpArms0"
+      ]
+   },
+   "runUpLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runUpLegs0",
+         "runUpLegs1",
+         "runUpLegs2",
+         "runUpLegs1",
+         "runUpLegs0",
+         "runUpLegs3",
+         "runUpLegs4",
+         "runUpLegs5",
+         "runUpLegs4",
+         "runUpLegs3"
+      ]
+   },
+   "runUpArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runUpArms0",
+         "runUpArms1",
+         "runUpArms2",
+         "runUpArms1",
+         "runUpArms0",
+         "runUpArms3",
+         "runUpArms4",
+         "runUpArms5",
+         "runUpArms4",
+         "runUpArms3"
+      ]
+   },
+   "idleLeftLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleLeftLegs0"
+      ]
+   },
+   "idleLeftArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleLeftArms0"
+      ]
+   },
+   "runLeftLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runLeftLegs0",
+         "runLeftLegs1",
+         "runLeftLegs2",
+         "runLeftLegs1",
+         "runLeftLegs0",
+         "runLeftLegs3",
+         "runLeftLegs4",
+         "runLeftLegs5",
+         "runLeftLegs4",
+         "runLeftLegs3"
+      ]
+   },
+   "runLeftArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runLeftArms0",
+         "runLeftArms1",
+         "runLeftArms2",
+         "runLeftArms1",
+         "runLeftArms0",
+         "runLeftArms3",
+         "runLeftArms4",
+         "runLeftArms5",
+         "runLeftArms4",
+         "runLeftArms3"
+      ]
+   },
+   "idleRightLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleRightLegs0"
+      ]
+   },
+   "idleRightArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "idleRightArms0"
+      ]
+   },
+   "runRightLegs": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runRightLegs0",
+         "runRightLegs1",
+         "runRightLegs2",
+         "runRightLegs1",
+         "runRightLegs0",
+         "runRightLegs3",
+         "runRightLegs4",
+         "runRightLegs5",
+         "runRightLegs4",
+         "runRightLegs3"
+      ]
+   },
+   "runRightArms": {
+      "frameDurations": 120,
+      "frameNames": [
+         "runRightArms0",
+         "runRightArms1",
+         "runRightArms2",
+         "runRightArms1",
+         "runRightArms0",
+         "runRightArms3",
+         "runRightArms4",
+         "runRightArms5",
+         "runRightArms4",
+         "runRightArms3"
       ]
    }
 }

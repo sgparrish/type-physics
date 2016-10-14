@@ -37,7 +37,8 @@ export default class AnimatedSprite extends PIXI.Sprite {
          let duration = this.currentAnimation.durations[this.currentFrame];
          while (this.currentTime > duration) {
             this.currentTime -= duration;
-            this.currentFrame += 1 % this.currentAnimation.frames;
+            this.currentFrame += 1;
+            this.currentFrame = this.currentFrame % this.currentAnimation.frameCount;
             duration = this.currentAnimation.durations[this.currentFrame];
          }
 

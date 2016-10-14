@@ -11,6 +11,10 @@
       {
          "name": "tiles",
          "file": "res/tiles.png"
+      },
+      {
+         "name": "animation",
+         "file": "res/animation.json"
       }
    ]
 }

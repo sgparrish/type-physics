@@ -1,24 +1,29 @@
 import Entity from "../engine/entity";
 import Vec2 from "../physics/vec2";
 import Body from "../physics/body";
+import Direction from "../physics/direction";
+import DirectionUtil from "../physics/directionutil";
 import RenderObject from "../graphics/renderobject";
 import RenderLayer from "../graphics/renderlayer";
 import Command from "../input/command";
 import CommandMap from "../input/commandmap";
-import CharacterModel from "./charactermodel";
+import AnimatedSprite from "../graphics/animatedsprite";
+import CharacterModel from "../graphics/charactermodel";
 
-const ACCELERATION = 100;
-const FRICTION = 80;
-const MAX_SPEED = 200;
+const MAX_SPEED = 120;
 
 export default class Player implements Entity {
 
+   private moving: boolean;
+   private direction: Direction;
    private body: Body;
-   private sprite: PIXI.DisplayObject;
+   private sprite: AnimatedSprite;
 
    public constructor() {
-      let charModel = new CharacterModel();
-      this.sprite = charModel.root;
+      this.moving = false;
+      this.direction = Direction.DOWN;
+
+      this.sprite = new AnimatedSprite(CharacterModel.buildAnimationSet(), "idleDown");
 
       this.body = new Body(
          new Vec2(4, 32),
@@ -32,27 +37,37 @@ export default class Player implements Entity {
    }
    update(delta: number): void {
 
-      let direction = new Vec2(0, 0);
-      if (CommandMap.getCommand(Command.LEFT) !== 0) {
-         direction = direction.add(new Vec2(-1, 0));
-      }
-      if (CommandMap.getCommand(Command.RIGHT) !== 0) {
-         direction = direction.add(new Vec2(1, 0));
-      }
-      if (CommandMap.getCommand(Command.UP) !== 0) {
-         direction = direction.add(new Vec2(0, -1));
-      }
-      if (CommandMap.getCommand(Command.DOWN) !== 0) {
-         direction = direction.add(new Vec2(0, 1));
-      }
-      if (direction.length() === 0) {
-         this.body.velocity = this.body.velocity.reduce(new Vec2(FRICTION, FRICTION));
+      let moveDirection = CommandMap.getDirection();
+      this.body.velocity = moveDirection.times(MAX_SPEED);
+
+      let newDirection = moveDirection.direction();
+      let newMoving = newDirection !== Direction.NULL;
+
+      let oldDirStr = DirectionUtil.directionToString(this.direction);
+      let newDirStr = DirectionUtil.directionToString(newDirection);
+
+      if (this.moving && !newMoving) {
+         // Was moving, and no longer moving
+         this.sprite.play('idle' + oldDirStr);
+      } else if (!this.moving && newMoving) {
+         // Wasn't moving, but now moving
+         this.sprite.play('run' + newDirStr);
+      } else if (this.moving && newMoving) {
+         // Was moving, and still moving
+         if (this.direction !== newDirection) {
+            // Changed direction
+            this.sprite.play('run' + newDirStr);
+         } else {
+            this.sprite.update(delta);
+         }
       } else {
-         direction = direction.normalize();
-         this.body.velocity = this.body.velocity.add(direction.times(ACCELERATION));
+         this.sprite.update(delta);
       }
 
-      this.body.velocity = this.body.velocity.clamp(MAX_SPEED);
+      this.moving = newMoving;
+      this.direction = newDirection;
+
+      this.sprite.update(delta);
    }
    render(interpPercent: number): RenderObject[] {
       this.sprite.position.set(this.body.position.x - 4, this.body.position.y - 16);

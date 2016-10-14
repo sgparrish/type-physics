@@ -83,12 +83,14 @@ def buildLists(directory):
         if len(filenames) != 0:
             fileList.append([])
             for filename in filenames:
-                fileList[-1].append((filename, os.path.join(root, filename)))
+                framename = os.path.splitext(filename)[0]
+                fileList[-1].append((framename, os.path.join(root, filename)))
     return fileList
 
 if __name__ == "__main__":
-    img, atlas = joinFiles(buildLists('human'))
+    img, atlas = joinFiles(buildLists('reference/human'))
     img.save('humanMaster.png')
+    atlas['meta']['image'] = 'humanMaster.png'
     with open('humanMaster.json', 'w') as atlasFile:
         encoder = json.JSONEncoder()
         atlasFile.write(encoder.encode(atlas))

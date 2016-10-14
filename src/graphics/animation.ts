@@ -9,7 +9,7 @@ export default class Animation {
       this.durations = durations;
    }
 
-   public get frames(): number {
+   public get frameCount(): number {
       return this.textures.length;
    }
 

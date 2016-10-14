@@ -118,6 +118,9 @@ export default class LoadScreen extends Screen {
          PIXI.loader.load();
       } else {
          console.log("Loading Complete.");
+         PIXI.loader.removeAllListeners('progress');
+         PIXI.loader.removeAllListeners('error');
+         PIXI.loader.removeAllListeners('complete');
          this.manager.setScreen(new GameScreen());
       }
    }

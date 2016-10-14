@@ -1,5 +1,6 @@
 import KeyMap from "./keymap";
 import Command from "./command";
+import Vec2 from "../physics/vec2";
 
 export default class CommandMap {
 
@@ -28,6 +29,14 @@ export default class CommandMap {
          }
       }
       return 0.0;
+   }
+
+   public static getDirection(): (Vec2) {
+      let x = this.getCommand(Command.RIGHT) - this.getCommand(Command.LEFT);
+      let y = this.getCommand(Command.DOWN) - this.getCommand(Command.UP);
+      let direction = new Vec2(x, y);
+
+      return direction.clamp(1);
    }
 
 }

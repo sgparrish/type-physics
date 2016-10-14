@@ -1,4 +1,5 @@
 import Utils from "../utils";
+import Direction from "./direction";
 
 export default class Vec2 {
 
@@ -87,5 +88,25 @@ export default class Vec2 {
          y = Math.min(this._y + other._y, 0);
       }
       return new Vec2(x, y);
+   }
+   public direction(): Direction {
+      let dir: Direction;
+      let abs = this.abs();
+      if (abs._x === 0 && abs._y === 0) {
+         dir = Direction.NULL;
+      } else if (abs._y > abs._x) {
+         if (this._y < 0) {
+            dir = Direction.UP;
+         } else {
+            dir = Direction.DOWN;
+         }
+      } else {
+         if (this._x < 0) {
+            dir = Direction.LEFT;
+         } else {
+            dir = Direction.RIGHT;
+         }
+      }
+      return dir;
    }
 }
