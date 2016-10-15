@@ -10,7 +10,7 @@ import CommandMap from "../input/commandmap";
 import AnimatedSprite from "../graphics/animatedsprite";
 import CharacterModel from "../graphics/charactermodel";
 
-const MAX_SPEED = 120;
+const MAX_SPEED = 100;
 
 export default class Player implements Entity {
 

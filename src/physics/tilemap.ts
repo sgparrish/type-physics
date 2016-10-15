@@ -2,13 +2,14 @@ import Vec2 from "./vec2";
 import Rectangle from "./rectangle";
 import Body from "./body";
 import Collidable from "./collidable";
+import DirectionSet from "./directionset";
 
 export default class Tilemap extends Collidable {
 
    public mapSize: Vec2;
    public tileSize: Vec2;
 
-   private collisionMap: boolean[][];
+   private collisionMap: DirectionSet[][];
 
    public constructor(pos: Vec2, mapSize: Vec2, tileSize: Vec2) {
       super();
@@ -21,12 +22,12 @@ export default class Tilemap extends Collidable {
       for (let y = 0; y < mapSize.y; y++) {
          this.collisionMap[y] = [];
          for (let x = 0; x < mapSize.x; x++) {
-            this.collisionMap[y][x] = false;
+            this.collisionMap[y][x] = new DirectionSet();
          }
       }
    }
 
-   private checkBoundsOfLocalCoords(position: Vec2): boolean {
+   private inLocalBounds(position: Vec2): boolean {
       return position.x >= 0 && position.x < this.mapSize.x &&
          position.y >= 0 && position.y < this.mapSize.y;
    }
@@ -41,23 +42,23 @@ export default class Tilemap extends Collidable {
       return new Vec2(x, y)
    }
 
-   public getTileAtWorldCoords(position: Vec2): boolean {
+   public getTileAtWorldCoords(position: Vec2): DirectionSet {
       return this.getTileAtLocalCoords(this.worldCoordsToLocalCoords(position));
    }
-   public getTileAtLocalCoords(position: Vec2): boolean {
-      if (this.checkBoundsOfLocalCoords(position)) {
-         return this.collisionMap[position.y][position.x] === true;
+   public getTileAtLocalCoords(position: Vec2): DirectionSet {
+      if (this.inLocalBounds(position)) {
+         return this.collisionMap[position.y][position.x];
       } else {
          return null;
       }
    }
 
-   public setTileAtWorldCoords(position: Vec2, collide: boolean): void {
-      this.setTileAtLocalCoords(this.worldCoordsToLocalCoords(position), collide);
+   public setTileAtWorldCoords(position: Vec2, directionSet: DirectionSet): void {
+      this.setTileAtLocalCoords(this.worldCoordsToLocalCoords(position), directionSet);
    }
-   public setTileAtLocalCoords(position: Vec2, collide: boolean): void {
-      if (this.checkBoundsOfLocalCoords(position)) {
-         this.collisionMap[position.y][position.x] = collide;
+   public setTileAtLocalCoords(position: Vec2, directionSet: DirectionSet): void {
+      if (this.inLocalBounds(position)) {
+         this.collisionMap[position.y][position.x] = directionSet;
       }
    }
 
@@ -84,22 +85,23 @@ export default class Tilemap extends Collidable {
          for (let x = min.x; x <= max.x; x++) {
             let localCoords = new Vec2(x, y);
             let worldCoords = this.localCoordsToWorldCoords(localCoords);
-            if (this.getTileAtLocalCoords(localCoords)) {
+            let tile = this.getTileAtLocalCoords(localCoords);
+            if (tile !== null && tile.any) {
                // Create body
                let body = new Body(worldCoords, new Vec2(0, 0), this.tileSize);
                body.moveable = false;
 
                // Set collision directions
-               // Check Right
-               let left = localCoords.add(new Vec2(-1, 0));
-               let right = localCoords.add(new Vec2(1, 0));
-               let top = localCoords.add(new Vec2(0, -1));
-               let bottom = localCoords.add(new Vec2(0, 1));
+               let leftTile = this.getTileAtLocalCoords(localCoords.add(new Vec2(-1, 0)));
+               let rightTile = this.getTileAtLocalCoords(localCoords.add(new Vec2(1, 0)));
+               let topTile = this.getTileAtLocalCoords(localCoords.add(new Vec2(0, -1)));
+               let bottomTile = this.getTileAtLocalCoords(localCoords.add(new Vec2(0, 1)));
 
-               body.collideDirections.left = !this.getTileAtLocalCoords(left);
-               body.collideDirections.right = !this.getTileAtLocalCoords(right);
-               body.collideDirections.top = !this.getTileAtLocalCoords(top);
-               body.collideDirections.bottom = !this.getTileAtLocalCoords(bottom);
+               body.collideDirections.left = tile.left && (leftTile === null || !leftTile.right);
+               body.collideDirections.right = tile.right && (rightTile === null || !rightTile.left);
+               body.collideDirections.top = tile.top && (topTile === null || !topTile.bottom);
+               body.collideDirections.bottom = tile.bottom && (bottomTile === null || !bottomTile.top);
+
                bodies.push(body);
             }
          }

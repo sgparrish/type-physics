@@ -1,17 +1,18 @@
 import Vec2 from "../physics/vec2";
 import Entity from "../engine/entity";
 import Tilemap from "../physics/tilemap";
+import DirectionSet from "../physics/directionset";
 import RenderObject from "../graphics/renderobject";
 import RenderLayer from "../graphics/renderlayer";
 import Map from "../tiledmap/map";
 import Layer from "../tiledmap/layer";
 
-export default class Kitchen implements Entity {
+export default class Level implements Entity {
 
    private mapModel: Map;
 
    private tileset: PIXI.Texture[];
-   private tileCollision: boolean[];
+   private tileCollision: DirectionSet[];
 
    private mapRender: RenderObject[];
    private mapRows: PIXI.Container[][];
@@ -63,8 +64,9 @@ export default class Kitchen implements Entity {
          }
          if (tileset.tileProperties) {
             for (let tileIndex in tileset.tileProperties) {
-               if (tileset.tileProperties[tileIndex].collides) {
-                  this.tileCollision[tileset.firstGid + parseInt(tileIndex)] = true;
+               if (tileset.tileProperties[tileIndex].collision) {
+                  let dirSet = DirectionSet.fromFlags(tileset.tileProperties[tileIndex].collision)
+                  this.tileCollision[tileset.firstGid + parseInt(tileIndex)] = dirSet;
                }
             }
          }
@@ -108,8 +110,7 @@ export default class Kitchen implements Entity {
                   if (this.tileCollision[gid]) {
                      this.physicsMap.setTileAtLocalCoords(
                         new Vec2(tileX, tileY),
-                        true)
-                        ;
+                        this.tileCollision[gid]);
                   }
                }
             }

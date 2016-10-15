@@ -165,14 +165,14 @@
             {
              "4":
                 {
-                 "collides":"true"
+                 "collision":"12"
                 }
             },
          "tilepropertytypes":
             {
              "4":
                 {
-                 "collides":"string"
+                 "collision":"string"
                 }
             },
          "tilewidth":16

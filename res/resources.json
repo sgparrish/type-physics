@@ -5,16 +5,24 @@
          "file": "res/humanMaster.json"
       },
       {
+         "name": "animation",
+         "file": "res/animation.json"
+      },
+      {
+         "name": "ship",
+         "file": "res/shiptest.json"
+      },
+      {
+         "name": "shiptiles",
+         "file": "res/shiptiles.png"
+      },
+      {
          "name": "kitchen",
          "file": "res/kitchen-test.json"
       },
       {
          "name": "tiles",
          "file": "res/tiles.png"
-      },
-      {
-         "name": "animation",
-         "file": "res/animation.json"
       }
    ]
 }
