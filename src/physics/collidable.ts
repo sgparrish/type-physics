@@ -1,5 +1,4 @@
 import Rectangle from "./rectangle";
-import Collision from "./collision";
 import CollisionListener from "./collisionlistener";
 
 abstract class Collidable {
@@ -13,7 +12,7 @@ abstract class Collidable {
       this.listener = null;
    }
 
-   public reportCollision(collision: Collision) {
+   public reportCollision(collision: any) {
       this.listener.onCollision(collision);
    }
 }
