@@ -46,12 +46,19 @@ export default class Rectangle {
    public add(x: number, y: number, width: number, height: number) {
       return new Rectangle(this.x + x, this.y + y, this.width + width, this.height + height);
    }
-
+/*
    public overlaps(other: Rectangle): boolean {
       return Utils.lt(this.left, other.right) &&  // this.left < other.right
          Utils.gt(this.right, other.left) &&  // this.right > other.left
          Utils.lt(this.top, other.bottom) &&  // this.top < other.bottom
          Utils.gt(this.bottom, other.top); // this.bottom > other.top
+   }
+*/
+   public overlaps(other: Rectangle): boolean {
+      return  this.left < other.right &&
+         this.right > other.left &&
+         this.top < other.bottom &&
+         this.bottom > other.top;
    }
 
    public contains(other: Rectangle): boolean {

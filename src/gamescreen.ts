@@ -12,7 +12,7 @@ export default class GameScreen extends Screen {
 
    public setup(): void {
       // Initialize scene componenets
-      this.gameStage = new Stage(false);
+      this.gameStage = new Stage(true);
       this.uiRoot = new PIXI.Container();
 
       this.fpsText = new PIXI.Text("0%",
@@ -23,7 +23,7 @@ export default class GameScreen extends Screen {
             stroke: "#000000",
             strokeThickness: 2
          } as any);
-      this.fpsText.position.set(512, 0);
+      this.fpsText.position.set(0, 0);
 
       // Setup scene graph
       this.root.addChild(this.gameStage.getDisplayRoot());

@@ -12,7 +12,7 @@ export default class Level implements Entity {
    private mapModel: Map;
 
    private tileset: PIXI.Texture[];
-   private tileCollision: DirectionSet[];
+   private tileCollision: boolean[];
 
    private mapRender: RenderObject[];
    private mapRows: PIXI.Container[][];
@@ -21,7 +21,7 @@ export default class Level implements Entity {
    private physicsMap: Tilemap;
 
    public constructor() {
-      this.mapModel = new Map(PIXI.loader.resources['kitchen'].data);
+      this.mapModel = new Map(PIXI.loader.resources['ship'].data);
 
       this.tileset = [];
       this.tileCollision = [];
@@ -65,8 +65,7 @@ export default class Level implements Entity {
          if (tileset.tileProperties) {
             for (let tileIndex in tileset.tileProperties) {
                if (tileset.tileProperties[tileIndex].collision) {
-                  let dirSet = DirectionSet.fromFlags(tileset.tileProperties[tileIndex].collision)
-                  this.tileCollision[tileset.firstGid + parseInt(tileIndex)] = dirSet;
+                  this.tileCollision[tileset.firstGid + parseInt(tileIndex)] = true;
                }
             }
          }
@@ -83,6 +82,10 @@ export default class Level implements Entity {
             renderLayer = RenderLayer.ROOM;
          } else if (layer.properties.layer == "floor") {
             renderLayer = RenderLayer.FLOOR;
+         } else if (layer.properties.layer == "back_wall") {
+            renderLayer = RenderLayer.BACK_WALL;
+         } else if (layer.properties.layer == "front_wall") {
+            renderLayer = RenderLayer.FRONT_WALL;
          }
 
          if (renderLayer !== null) {
@@ -107,10 +110,19 @@ export default class Level implements Entity {
                   tileIndex++;
 
                   // Collision
+                  if (renderLayer == RenderLayer.FLOOR) {
+                     // if the floor layer has gid of 0, not walkable
+                     if (gid === 0) {
+                        this.physicsMap.setTileAtLocalCoords(
+                           new Vec2(tileX, tileY),
+                           true);
+                     }
+                  }
+                  // If this tile is set to collide then collide
                   if (this.tileCollision[gid]) {
                      this.physicsMap.setTileAtLocalCoords(
                         new Vec2(tileX, tileY),
-                        this.tileCollision[gid]);
+                        true);
                   }
                }
             }

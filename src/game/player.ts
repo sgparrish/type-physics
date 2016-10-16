@@ -28,7 +28,7 @@ export default class Player implements Entity {
       this.body = new Body(
          new Vec2(4, 32),
          new Vec2(0, 0),
-         new Vec2(16, 12)
+         new Vec2(12, 10)
       );
    }
 
@@ -70,7 +70,7 @@ export default class Player implements Entity {
       this.sprite.update(delta);
    }
    render(interpPercent: number): RenderObject[] {
-      this.sprite.position.set(this.body.position.x - 4, this.body.position.y - 16);
+      this.sprite.position.set(this.body.position.x - 6, this.body.position.y - 20);
       return [new RenderObject(this.sprite, this.body.bounds.top, RenderLayer.ROOM)];
    }
 }

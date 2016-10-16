@@ -1,6 +1,7 @@
 enum RenderLayer {
    FLOOR,
+   BACK_WALL,
    ROOM,
-   CEILING
+   FRONT_WALL
 }
 export default RenderLayer;

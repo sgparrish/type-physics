@@ -12,7 +12,7 @@ export default class Context {
       this.utilRenderer = new PIXI.CanvasRenderer(1, 1, {
          transparent: true
       });
-      this.renderer.backgroundColor = 0xeeeeee;
+      this.renderer.backgroundColor = 0x000000;
 
       document.body.appendChild(this.renderer.view);
 
