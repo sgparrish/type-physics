@@ -73,7 +73,6 @@ export default class World {
    }
 
    private collideEdge(delta: number, body: Body, edge: Edge): void {
-      console.log('plz');
       if (body.bounds.overlaps(edge.bounds)) {
          this.separateBodyEdge(delta, body, edge);
       }
