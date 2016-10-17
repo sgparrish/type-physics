@@ -13,6 +13,10 @@
          "file": "res/shiptest.json"
       },
       {
+         "name": "ship-planes",
+         "file": "res/ship-planes.json"
+      },
+      {
          "name": "shiptiles",
          "file": "res/shiptiles.png"
       },

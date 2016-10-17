@@ -3,7 +3,6 @@ import Vec2 from "../physics/vec2";
 import Body from "../physics/body";
 import Direction from "../physics/direction";
 import DirectionUtil from "../physics/directionutil";
-import RenderObject from "../graphics/renderobject";
 import RenderLayer from "../graphics/renderlayer";
 import Command from "../input/command";
 import CommandMap from "../input/commandmap";
@@ -12,28 +11,26 @@ import CharacterModel from "../graphics/charactermodel";
 
 const MAX_SPEED = 100;
 
-export default class Player implements Entity {
+export default class Player extends Entity {
 
    private moving: boolean;
    private direction: Direction;
-   private body: Body;
-   private sprite: AnimatedSprite;
+   public body: Body;
+   public display: AnimatedSprite;
 
    public constructor() {
+      super();
       this.moving = false;
       this.direction = Direction.DOWN;
 
-      this.sprite = new AnimatedSprite(CharacterModel.buildAnimationSet(), "idleDown");
+      this.display = new AnimatedSprite(CharacterModel.buildAnimationSet(), "idleDown");
+      this.layer = 100;
 
       this.body = new Body(
-         new Vec2(4, 32),
+         new Vec2(80, 80),
          new Vec2(0, 0),
          new Vec2(12, 10)
       );
-   }
-
-   getCollidable(): Body {
-      return this.body;
    }
    update(delta: number): void {
 
@@ -48,29 +45,29 @@ export default class Player implements Entity {
 
       if (this.moving && !newMoving) {
          // Was moving, and no longer moving
-         this.sprite.play('idle' + oldDirStr);
+         this.display.play('idle' + oldDirStr);
       } else if (!this.moving && newMoving) {
          // Wasn't moving, but now moving
-         this.sprite.play('run' + newDirStr);
+         this.display.play('run' + newDirStr);
       } else if (this.moving && newMoving) {
          // Was moving, and still moving
          if (this.direction !== newDirection) {
             // Changed direction
-            this.sprite.play('run' + newDirStr);
+            this.display.play('run' + newDirStr);
          } else {
-            this.sprite.update(delta);
+            this.display.update(delta);
          }
       } else {
-         this.sprite.update(delta);
+         this.display.update(delta);
       }
 
       this.moving = newMoving;
       this.direction = newDirection;
 
-      this.sprite.update(delta);
+      this.display.update(delta);
    }
-   render(interpPercent: number): RenderObject[] {
-      this.sprite.position.set(this.body.position.x - 6, this.body.position.y - 20);
-      return [new RenderObject(this.sprite, this.body.bounds.top, RenderLayer.ROOM)];
+   render(interpPercent: number): void {
+      this.depth = this.body.bounds.top;
+      this.display.position.set(this.body.position.x - 6, this.body.position.y - 22);
    }
 }

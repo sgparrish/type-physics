@@ -3,7 +3,6 @@ import Rectangle from "./rectangle";
 import DirectionSet from "./directionset";
 import Collidable from "./collidable";
 import Body from "./body";
-import Edge from "./edge";
 import Tilemap from "./tilemap";
 
 const MAX_DELTA_ADJUST = 3;
@@ -49,11 +48,7 @@ export default class World {
    private collide(delta: number, collidableA: Collidable, collidableB: Collidable): void {
       if (collidableA instanceof Body && collidableB instanceof Body) {
          this.collideBodies(delta, collidableA, collidableB);
-      } else if (collidableA instanceof Body && collidableB instanceof Edge) {
-         this.collideEdge(delta, collidableA, collidableB);
-      } else if (collidableA instanceof Edge && collidableB instanceof Body) {
-         this.collideEdge(delta, collidableB, collidableA);
-      } else if (collidableA instanceof Body && collidableB instanceof Tilemap) {
+      }else if (collidableA instanceof Body && collidableB instanceof Tilemap) {
          this.collideTilemap(delta, collidableA, collidableB);
       } else if (collidableA instanceof Tilemap && collidableB instanceof Body) {
          this.collideTilemap(delta, collidableB, collidableA);
@@ -69,12 +64,6 @@ export default class World {
          if (bodyA.bounds.overlaps(bodyB.bounds)) {
             this.separateBodiesX(delta, bodyA, bodyB);
          }
-      }
-   }
-
-   private collideEdge(delta: number, body: Body, edge: Edge): void {
-      if (body.bounds.overlaps(edge.bounds)) {
-         this.separateBodyEdge(delta, body, edge);
       }
    }
 
@@ -159,44 +148,6 @@ export default class World {
          // Just body B is movable
          bodyB.position = bodyB.position.add(new Vec2(0, overlap));
          bodyB.velocity = new Vec2(bodyB.velocity.x, bodyA.velocity.y);
-      }
-   }
-
-   private separateBodyEdge(delta: number, body: Body, edge: Edge): void {
-      let overlap: number;
-      let maxOverlap: number;
-      if (edge.horizontal) {
-         maxOverlap = Math.abs(body.velocity.y * delta) + MAX_DELTA_ADJUST;
-         if (body.velocity.y < 0) {
-            // collide body top with edge
-            overlap = body.bounds.top - edge.position.x;
-         } else if (body.velocity.y > 0) {
-            // collide body bottom with edge
-            overlap = body.bounds.bottom - edge.position.x;
-         } else {
-            return;
-         }
-         if (overlap > maxOverlap) {
-            return;
-         }
-         body.position = body.position.sub(new Vec2(0, overlap));
-         body.velocity = new Vec2(body.velocity.x, 0);
-      } else {
-         maxOverlap = Math.abs(body.velocity.x * delta) + MAX_DELTA_ADJUST;
-         if (body.velocity.x < 0) {
-            // collide body left with edge
-            overlap = body.bounds.left - edge.position.y;
-         } else if (body.velocity.x > 0) {
-            // collide body right with edge
-            overlap = body.bounds.right - edge.position.y;
-         } else {
-            return;
-         }
-         if (overlap > maxOverlap) {
-            return;
-         }
-         body.position = body.position.sub(new Vec2(overlap, 0));
-         body.velocity = new Vec2(0, body.velocity.y);
       }
    }
 }

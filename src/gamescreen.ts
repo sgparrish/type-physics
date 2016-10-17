@@ -12,7 +12,7 @@ export default class GameScreen extends Screen {
 
    public setup(): void {
       // Initialize scene componenets
-      this.gameStage = new Stage(true);
+      this.gameStage = new Stage(false);
       this.uiRoot = new PIXI.Container();
 
       this.fpsText = new PIXI.Text("0%",
@@ -31,8 +31,9 @@ export default class GameScreen extends Screen {
 
       this.uiRoot.addChild(this.fpsText);
 
-      this.gameStage.add(new Player());
-      this.gameStage.add(new Level());
+      this.gameStage.add(new Player(), true);
+      let level = new Level();
+      this.gameStage.addAll(level.entities);
    }
    public update(delta: number): void {
       this.gameStage.update(delta);

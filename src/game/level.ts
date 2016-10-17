@@ -2,33 +2,29 @@ import Vec2 from "../physics/vec2";
 import Entity from "../engine/entity";
 import Tilemap from "../physics/tilemap";
 import DirectionSet from "../physics/directionset";
-import RenderObject from "../graphics/renderobject";
-import RenderLayer from "../graphics/renderlayer";
 import Map from "../tiledmap/map";
 import Layer from "../tiledmap/layer";
+import Plane from "./plane";
+import Context from "../graphics/context";
 
-export default class Level implements Entity {
+export default class Level {
 
    private mapModel: Map;
 
    private tileset: PIXI.Texture[];
    private tileCollision: boolean[];
 
-   private mapRender: RenderObject[];
-   private mapRows: PIXI.Container[][];
-   private mapSprites: PIXI.Sprite[][][];
+   public entities: Entity[];
 
    private physicsMap: Tilemap;
 
    public constructor() {
-      this.mapModel = new Map(PIXI.loader.resources['ship'].data);
+      this.mapModel = new Map(PIXI.loader.resources['ship-planes'].data);
 
       this.tileset = [];
       this.tileCollision = [];
 
-      this.mapRender = [];
-      this.mapRows = [];
-      this.mapSprites = [];
+      this.entities = [];
 
       this.physicsMap = new Tilemap(
          new Vec2(0, 0),
@@ -64,8 +60,9 @@ export default class Level implements Entity {
          }
          if (tileset.tileProperties) {
             for (let tileIndex in tileset.tileProperties) {
-               if (tileset.tileProperties[tileIndex].collision) {
-                  this.tileCollision[tileset.firstGid + parseInt(tileIndex)] = true;
+               let tileIdx = parseInt(tileIndex);
+               if (tileset.tileProperties[tileIdx].collision) {
+                  this.tileCollision[tileset.firstGid + tileIdx] = true;
                }
             }
          }
@@ -74,68 +71,130 @@ export default class Level implements Entity {
 
    private unpackLayers(): void {
       for (let layerIndex in this.mapModel.layers) {
-         let layer = this.mapModel.layers[layerIndex];
+         let layerIdx = parseInt(layerIndex);
+         let layer = this.mapModel.layers[layerIdx];
 
-         let renderLayer: RenderLayer = null;
-         // Identify render layer from layer properties
-         if (layer.properties.layer == "room") {
-            renderLayer = RenderLayer.ROOM;
-         } else if (layer.properties.layer == "floor") {
-            renderLayer = RenderLayer.FLOOR;
-         } else if (layer.properties.layer == "back_wall") {
-            renderLayer = RenderLayer.BACK_WALL;
-         } else if (layer.properties.layer == "front_wall") {
-            renderLayer = RenderLayer.FRONT_WALL;
+         let entity: Entity;
+
+         // Read layer properties
+         if (layer.properties && layer.properties.type) {
+            let type: string = (layer.properties.type as string).toLowerCase();
+            if (type === "plane") {
+               entity = this.unpackPlane(layerIdx, layer);
+            } else if (type === "entity") {
+
+            }
+         } else {
+            // default to plane
+            entity = this.unpackPlane(layerIdx, layer);
          }
 
-         if (renderLayer !== null) {
-            this.mapRows[renderLayer] = [];
-            this.mapSprites[renderLayer] = [];
+         // Unpack collision
+         if (layer.properties && layer.properties.collision !== undefined) {
+            entity.body = this.unpackCollision(layer);
+         }
 
-            // Generate layer rows and sprites
-            let tileIndex = 0;
-            for (let tileY = 0; tileY < layer.height; tileY++) {
-               let spriteY = tileY * this.mapModel.tileHeight;
-               this.mapRows[renderLayer][tileY] = new PIXI.Container();
-               this.mapRender.push(new RenderObject(this.mapRows[renderLayer][tileY], spriteY, renderLayer));
-               this.mapSprites[renderLayer][tileY] = [];
-               for (let tileX = 0; tileX < layer.width; tileX++) {
-                  // Graphics
-                  let gid = layer.data[tileIndex];
-                  let spriteX = tileX * this.mapModel.tileWidth;
-                  let sprite = new PIXI.Sprite(this.tileset[gid]);
-                  sprite.position.set(spriteX, spriteY);
-                  this.mapSprites[renderLayer][tileY][tileX] = sprite;
-                  this.mapRows[renderLayer][tileY].addChild(sprite);
-                  tileIndex++;
-
-                  // Collision
-                  if (renderLayer == RenderLayer.FLOOR) {
-                     // if the floor layer has gid of 0, not walkable
-                     if (gid === 0) {
-                        this.physicsMap.setTileAtLocalCoords(
-                           new Vec2(tileX, tileY),
-                           true);
-                     }
-                  }
-                  // If this tile is set to collide then collide
-                  if (this.tileCollision[gid]) {
-                     this.physicsMap.setTileAtLocalCoords(
-                        new Vec2(tileX, tileY),
-                        true);
-                  }
-               }
-            }
+         if (entity) {
+            this.entities.push(entity);
          }
       }
    }
 
-   getCollidable(): Tilemap {
-      return this.physicsMap;
+   private unpackPlane(layerIdx: number, layer: Layer): Entity {
+      let plane = new Plane(layerIdx);
+
+      // Read properties
+      if (layer.properties && layer.properties.minAlpha !== "undefined") {
+         plane.minAlpha = layer.properties.minAlpha;
+      }
+
+      // Bounds for depth calculation
+      let top = Number.MAX_VALUE;
+      let bottom = Number.MIN_VALUE;
+      let left = Number.MAX_VALUE;
+      let right = Number.MIN_VALUE;
+      let tileIdx = 0;
+      for (let tileY = 0; tileY < layer.height; tileY++) {
+         for (let tileX = 0; tileX < layer.width; tileX++) {
+            let gid = layer.data[tileIdx];
+            if (gid !== 0) {
+               // Update bounds
+               top = Math.min(top, tileY);
+               bottom = Math.max(bottom, tileY);
+               left = Math.min(left, tileX);
+               right = Math.max(right, tileX);
+            }
+            tileIdx += 1;
+         }
+      }
+
+      // Display Container
+      let root = new PIXI.Container();
+      tileIdx = 0;
+      for (let tileY = 0; tileY < layer.height; tileY++) {
+         for (let tileX = 0; tileX < layer.width; tileX++) {
+            let gid = layer.data[tileIdx];
+
+            if (gid !== 0) {
+               // Calculate sprite coordinates
+               let spriteX = (tileX - left) * this.mapModel.tileWidth;
+               let spriteY = (tileY - top) * this.mapModel.tileHeight;
+
+               // Add texture to display contanier
+               let sprite = new PIXI.Sprite(this.tileset[gid]);
+               sprite.position.set(spriteX, spriteY);
+               root.addChild(sprite);
+            }
+            tileIdx += 1;
+         }
+      }
+
+      // Render container to texture
+      let width = ((right - left) + 1) * this.mapModel.tileWidth;
+      let height = ((bottom - top) + 1) * this.mapModel.tileHeight;
+      let texture = Context.renderToTexture(width, height, root);
+      root.destroy({ children: true } as any);
+
+      let x = left * this.mapModel.tileWidth;
+      let y = top * this.mapModel.tileHeight;
+
+      let sprite = new PIXI.Sprite(texture);
+      sprite.position.set(x, y);
+      plane.display = sprite;
+      plane.depth = y + height;
+
+      // Read depth properties to overwrite if necessary
+      if (layer.properties && layer.properties.depth !== undefined && typeof layer.properties.depth === "number") {
+         plane.depth = layer.properties.depth;
+      } else if (layer.properties && layer.properties.depthAdjust !== undefined && typeof layer.properties.depthAdjust === "number") {
+         plane.depth += layer.properties.depthAdjust;
+      }
+
+      return plane;
    }
-   update(delta: number): void {
-   }
-   render(interpPercent: number): RenderObject[] {
-      return this.mapRender;
+
+   private unpackCollision(layer: Layer): Tilemap {
+      let tilemap = new Tilemap(
+         new Vec2(0, 0),
+         new Vec2(this.mapModel.width, this.mapModel.height),
+         new Vec2(this.mapModel.tileWidth, this.mapModel.tileHeight)
+      );
+
+      let tileIdx = 0;
+      for (let tileY = 0; tileY < layer.height; tileY++) {
+         for (let tileX = 0; tileX < layer.width; tileX++) {
+            let gid = layer.data[tileIdx];
+
+            if (gid === 0) {
+               tilemap.setTileAtLocalCoords(new Vec2(tileX, tileY), true);
+            } else {
+               tilemap.setTileAtLocalCoords(new Vec2(tileX, tileY), false);
+            }
+
+            tileIdx += 1;
+         }
+      }
+
+      return tilemap;
    }
 }
